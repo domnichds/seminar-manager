@@ -1,0 +1,18 @@
+# ninja log v6
+112	414	7629085546362311	untitled1_autogen/timestamp	bacf818c2c0b5e43
+112	414	7629085546362311	C:/Users/user/Documents/untitled1/build/Desktop_Qt_6_8_2_MinGW_64_bit-Debug/untitled1_autogen/timestamp	bacf818c2c0b5e43
+112	414	7629085546362311	untitled1_autogen/mocs_compilation.cpp	bacf818c2c0b5e43
+112	414	7629085546362311	C:/Users/user/Documents/untitled1/build/Desktop_Qt_6_8_2_MinGW_64_bit-Debug/untitled1_autogen/mocs_compilation.cpp	bacf818c2c0b5e43
+5212	6150	7629085597349578	untitled1.exe	a9e52da057eb8b7c
+280	370	7623518285863033	qrc_font.cpp	c0ae4ce6074f7e97
+574	2547	7623008945158174	CMakeFiles/untitled1.dir/untitled1_autogen/mocs_compilation.cpp.obj	9637420f77da42a5
+589	5212	7629085551129446	CMakeFiles/untitled1.dir/mainwindow.cpp.obj	2b622eb1c0b08952
+318	3132	7623516048578940	CMakeFiles/untitled1.dir/main.cpp.obj	73fefff13c6178f
+310	3689	7624542513276510	CMakeFiles/untitled1.dir/secondwindow.cpp.obj	37b971f972d1150a
+375	548	7623518286060364	CMakeFiles/untitled1.dir/qrc_font.cpp.obj	15afb2136074fd17
+9	4745	7629630225445290	build.ninja	bafce67602c98292
+908	4219	7621869154160783	CMakeFiles/untitled1.dir/crosshighlighttableview.cpp.obj	7ea11a33841f85ee
+904	4268	7621869154130298	CMakeFiles/untitled1.dir/rotatedheaderview.cpp.obj	9717dee7851f2607
+865	5771	7621878673741402	CMakeFiles/untitled1.dir/nofocusdelegate.cpp.obj	815806bfeb02aa1c
+585	2431	7623005267439738	CMakeFiles/untitled1.dir/customcornerwidget.cpp.obj	e234be481ded5fdc
+280	370	7623518285863033	C:/Users/user/Documents/untitled1/build/Desktop_Qt_6_8_2_MinGW_64_bit-Debug/qrc_font.cpp	c0ae4ce6074f7e97

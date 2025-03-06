@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="ALS Sector">
+    <file>ALS_Sector-Bold.otf</file>
+    <file>ALS_Sector-Regular.otf</file>
+  </qresource>
+</RCC>
