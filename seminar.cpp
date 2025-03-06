@@ -22,7 +22,7 @@ void Seminar::addDate(QDate date)
 {
     for (int i = 0; i < this->dates.size(); i++)
     {
-        if (date == dates[i]) throw std::invalid_argument("Дата уже присутствует");
+        if (date == this->dates[i]) throw std::invalid_argument("Дата уже присутствует");
     }
     this->dates.push_back(date);
     sort(this->dates.begin(), this->dates.end());
@@ -44,6 +44,19 @@ void Seminar::deleteDate(QDate date)
     }
 }
 
+void Seminar::changeDate(QDate old_date, QDate new_date)
+{
+    for (int i = 0; i < this->dates.size(); i++)
+    {
+        if (new_date == this->dates[i]) throw std::invalid_argument("Дата уже присутствует");
+    }
+    for (int i = 0; i <this->students.size(); i++)
+    {
+        short temp_mark = this->students[i]->marks[old_date];
+        this->students[i]->marks.erase(old_date);
+        this->students[i]->marks[new_date] = temp_mark;
+    }
+}
 Seminar::~Seminar()
 {
     for (auto student : this->students)
@@ -51,3 +64,4 @@ Seminar::~Seminar()
         delete student;
     }
 }
+
