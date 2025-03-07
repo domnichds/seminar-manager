@@ -12,7 +12,7 @@ private:
         std::map<QDate, short> marks;
     };
     QString name;
-    std::vector<Student*> students;
+    std::vector<Student> students;
     std::vector<QDate> dates;
 public:
     Seminar(QString);
@@ -21,8 +21,8 @@ public:
     void changeDate(QDate, QDate);
     void deleteDate(QDate);
     void addStudent(QString);
-    void changeStudentName(Student*, QString);
-    void deleteStudent(Student*);
+    void changeStudentName(QString, QString);
+    void deleteStudent(QString);
     ~Seminar();
 };
 #endif
