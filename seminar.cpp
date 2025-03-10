@@ -73,4 +73,19 @@ void Seminar::addStudent(QString name)
     });
 }
 
+void Seminar::changeStudentName(QString old_name,QString new_name)
+{
+    for (auto& student : students)
+    {
+        if (student.name == old_name) student.name = new_name;
+        break;
+    }
+}
 
+void Seminar::deleteStudent(QString name)
+{
+    students.erase(
+        std::remove_if(students.begin(), students.end(), [&name](const Student& student) {
+            return student.name == name;
+        }), students.end());
+}

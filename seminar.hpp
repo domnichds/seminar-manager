@@ -23,6 +23,5 @@ public:
     void addStudent(QString);
     void changeStudentName(QString, QString);
     void deleteStudent(QString);
-    ~Seminar();
 };
 #endif
