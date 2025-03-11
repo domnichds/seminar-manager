@@ -1,0 +1,1263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1400</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+    background-image: url(background.png);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>470</width>
+      <height>771</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0,0">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <item row="12" column="1" colspan="2">
+      <widget class="QLabel" name="label_2">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Bold</family>
+         <pointsize>18</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    color: white;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Управление студентами</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="2">
+      <widget class="QLineEdit" name="lineEdit_4">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QLineEdit */
+QLineEdit {
+    background-color: rgba(65, 32, 138, 0.2);   /* Прозрачный фиолетовый фон */
+    color: white;                               /* Белый цвет текста */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px;                              /* Отступы внутри поля */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                            /* Размер шрифта */
+    font-weight: normal;                        /* Обычный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на QLineEdit */
+QLineEdit:hover {
+    background-color: rgba(112, 69, 211, 0.3);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при фокусе на QLineEdit (когда активное поле) */
+QLineEdit:focus {
+    background-color: rgba(112, 69, 211, 0.4);  /* Еще более светлый фон при фокусе */
+    border: 2px solid rgba(112, 69, 211, 1);     /* Более насыщенная рамка */
+    outline: none;                              /* Убираем стандартное выделение */
+}
+
+/* Эффект при введении текста (при наличии текста) */
+QLineEdit:!empty {
+    background-color: rgba(112, 69, 211, 0.1);  /* Очень легкий фон, если поле не пустое */
+}
+</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="1">
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Добавить студента</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="2">
+      <widget class="QLabel" name="label">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Bold</family>
+         <pointsize>18</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    color: white;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Управление семинарами</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QPushButton" name="pushButton_6">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Изменить дату</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Изменить</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QLineEdit" name="lineEdit_2">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QLineEdit */
+QLineEdit {
+    background-color: rgba(65, 32, 138, 0.2);   /* Прозрачный фиолетовый фон */
+    color: white;                               /* Белый цвет текста */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px;                              /* Отступы внутри поля */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                            /* Размер шрифта */
+    font-weight: normal;                        /* Обычный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на QLineEdit */
+QLineEdit:hover {
+    background-color: rgba(112, 69, 211, 0.3);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при фокусе на QLineEdit (когда активное поле) */
+QLineEdit:focus {
+    background-color: rgba(112, 69, 211, 0.4);  /* Еще более светлый фон при фокусе */
+    border: 2px solid rgba(112, 69, 211, 1);     /* Более насыщенная рамка */
+    outline: none;                              /* Убираем стандартное выделение */
+}
+
+/* Эффект при введении текста (при наличии текста) */
+QLineEdit:!empty {
+    background-color: rgba(112, 69, 211, 0.1);  /* Очень легкий фон, если поле не пустое */
+}
+</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="1" colspan="2">
+      <widget class="QPushButton" name="pushButton_9">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Удалить студента</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1" colspan="2">
+      <widget class="QPushButton" name="pushButton_8">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Удалить дату</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="2">
+      <widget class="QDateEdit" name="dateEdit_3">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QDateEdit */
+QDateEdit {
+    background: transparent;
+    border: 1px solid rgba(65, 32, 138, 0.6); /* Фиолетовая граница */
+    color: white;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+/* При наведении: подсвечиваем рамку */
+QDateEdit:hover {
+    border: 1px solid rgba(112, 69, 211, 0.8);
+    background-color: rgba(112, 69, 211, 0.2);
+}
+
+/* При нажатии: делаем фон более насыщенным */
+QDateEdit:focus {
+    border: 1px solid rgba(65, 32, 138, 0.9);
+    background-color: rgba(65, 32, 138, 0.3);
+}
+
+QDateEdit::down-arrow {
+    width: 0px;
+    height: 0px;
+    border: none;
+    background: transparent;
+    opacity: 0;
+}
+
+QDateEdit::up-arrow {
+    width: 0px;
+    height: 0px;
+    border: none;
+    background: transparent;
+    opacity: 0;
+}
+
+</string>
+       </property>
+       <property name="wrapping">
+        <bool>false</bool>
+       </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+       <property name="date">
+        <date>
+         <year>2025</year>
+         <month>2</month>
+         <day>1</day>
+        </date>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="2">
+      <widget class="QLineEdit" name="lineEdit_3">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QLineEdit */
+QLineEdit {
+    background-color: rgba(65, 32, 138, 0.2);   /* Прозрачный фиолетовый фон */
+    color: white;                               /* Белый цвет текста */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px;                              /* Отступы внутри поля */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                            /* Размер шрифта */
+    font-weight: normal;                        /* Обычный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на QLineEdit */
+QLineEdit:hover {
+    background-color: rgba(112, 69, 211, 0.3);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при фокусе на QLineEdit (когда активное поле) */
+QLineEdit:focus {
+    background-color: rgba(112, 69, 211, 0.4);  /* Еще более светлый фон при фокусе */
+    border: 2px solid rgba(112, 69, 211, 1);     /* Более насыщенная рамка */
+    outline: none;                              /* Убираем стандартное выделение */
+}
+
+/* Эффект при введении текста (при наличии текста) */
+QLineEdit:!empty {
+    background-color: rgba(112, 69, 211, 0.1);  /* Очень легкий фон, если поле не пустое */
+}
+</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QLineEdit */
+QLineEdit {
+    background-color: rgba(65, 32, 138, 0.2);   /* Прозрачный фиолетовый фон */
+    color: white;                               /* Белый цвет текста */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px;                              /* Отступы внутри поля */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                            /* Размер шрифта */
+    font-weight: normal;                        /* Обычный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на QLineEdit */
+QLineEdit:hover {
+    background-color: rgba(112, 69, 211, 0.3);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при фокусе на QLineEdit (когда активное поле) */
+QLineEdit:focus {
+    background-color: rgba(112, 69, 211, 0.4);  /* Еще более светлый фон при фокусе */
+    border: 2px solid rgba(112, 69, 211, 1);     /* Более насыщенная рамка */
+    outline: none;                              /* Убираем стандартное выделение */
+}
+
+/* Эффект при введении текста (при наличии текста) */
+QLineEdit:!empty {
+    background-color: rgba(112, 69, 211, 0.1);  /* Очень легкий фон, если поле не пустое */
+}
+</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Добавить семинар</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QPushButton" name="pushButton">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Добавить дату</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
+      <widget class="QDateEdit" name="dateEdit_2">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QDateEdit */
+QDateEdit {
+    background: transparent;
+    border: 1px solid rgba(65, 32, 138, 0.6); /* Фиолетовая граница */
+    color: white;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+/* При наведении: подсвечиваем рамку */
+QDateEdit:hover {
+    border: 1px solid rgba(112, 69, 211, 0.8);
+    background-color: rgba(112, 69, 211, 0.2);
+}
+
+/* При нажатии: делаем фон более насыщенным */
+QDateEdit:focus {
+    border: 1px solid rgba(65, 32, 138, 0.9);
+    background-color: rgba(65, 32, 138, 0.3);
+}
+
+QDateEdit::down-arrow {
+    width: 0px;
+    height: 0px;
+    border: none;
+    background: transparent;
+    opacity: 0;
+}
+
+QDateEdit::up-arrow {
+    width: 0px;
+    height: 0px;
+    border: none;
+    background: transparent;
+    opacity: 0;
+}
+
+</string>
+       </property>
+       <property name="wrapping">
+        <bool>false</bool>
+       </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+       <property name="date">
+        <date>
+         <year>2025</year>
+         <month>2</month>
+         <day>1</day>
+        </date>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="1">
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Изменить имя</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" colspan="2">
+      <widget class="QGraphicsView" name="graphicsView">
+       <property name="minimumSize">
+        <size>
+         <width>450</width>
+         <height>200</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>450</width>
+         <height>200</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1" colspan="2">
+      <widget class="QPushButton" name="pushButton_7">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для кнопок */
+QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);   /* Основной фиолетовый цвет */
+    color: white;                               /* Белый текст */
+    border: 1px solid rgba(65, 32, 138, 0.8);    /* Фиолетовая рамка */
+    padding: 10px 20px;                         /* Отступы для кнопки */
+    border-radius: 12px;                        /* Округлые углы */
+    font-size: 16px;                             /* Размер шрифта */
+    font-weight: bold;                          /* Жирный шрифт */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавные переходы */
+}
+
+/* Эффект при наведении на кнопку */
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);  /* Светлее фиолетовый при наведении */
+    border: 1px solid rgba(112, 69, 211, 1);     /* Светлая рамка */
+}
+
+/* Эффект при нажатии на кнопку */
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);     /* Насыщенный фиолетовый при нажатии */
+    border: 1px solid rgba(65, 32, 138, 1);      /* Насыщенная рамка */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Легкая тень внутри при нажатии */
+}
+
+/* Стиль для кнопки в фокусе (если это необходимо) */
+QPushButton:focus {
+    outline: none; /* Убираем стандартное выделение фокуса */
+    border: 2px solid rgba(112, 69, 211, 1); /* Рамка фокуса */
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Удалить семинар</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="1" colspan="2">
+      <widget class="QLabel" name="label_4">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Bold</family>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    color: white;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Системное сообщение (ошибки)</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>0</y>
+      <width>931</width>
+      <height>780</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>5</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>5</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QListView" name="SeminarListView">
+       <property name="minimumSize">
+        <size>
+         <width>480</width>
+         <height>760</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>480</width>
+         <height>760</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QListView: прозрачный фон и отсутствие рамки */
+QListView {
+   /* background: transparent;*/
+    border: none;
+}
+
+/* Устанавливаем прозрачный фон для области, где отрисовываются элементы */
+QListView::viewport {
+    background: transparent;
+}
+
+/* Обычное состояние элемента с прозрачной рамкой */
+QListView::item {
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 5px;
+}
+
+/* При наведении: добавляем округлую рамку */
+QListView::item:hover {
+    background-color: rgba(112, 69, 211, 0.2); /* Светлый фиолетовый */
+    border: 1px solid rgba(112, 69, 211, 0.5);
+    border-radius: 8px;
+}
+
+/* При нажатии: используем твой основной цвет */
+QListView::item:pressed {
+    background-color: rgba(65, 32, 138, 0.4); /* #41208A */
+    border: 1px solid rgba(65, 32, 138, 0.6);
+    border-radius: 8px;
+}
+
+/* При выборе: округлая рамка с более насыщенным цветом */
+QListView::item:selected {
+    background-color: rgba(65, 32, 138, 0.6); /* #41208A */
+    border: 1px solid rgba(65, 32, 138, 0.9);
+    border-radius: 8px;
+    outline: none;
+}
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListView" name="StudentsListView">
+       <property name="minimumSize">
+        <size>
+         <width>300</width>
+         <height>760</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>760</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QListView: прозрачный фон и отсутствие рамки */
+QListView {
+    background: black;
+    border: none;
+}
+
+/* Устанавливаем прозрачный фон для области, где отрисовываются элементы */
+QListView::viewport {
+    background: transparent;
+}
+
+/* Обычное состояние элемента с прозрачной рамкой */
+QListView::item {
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 5px;
+}
+
+/* При наведении: добавляем округлую рамку */
+QListView::item:hover {
+    background-color: rgba(112, 69, 211, 0.2); /* Светлый фиолетовый */
+    border: 1px solid rgba(112, 69, 211, 0.5);
+    border-radius: 8px;
+}
+
+/* При нажатии: используем твой основной цвет */
+QListView::item:pressed {
+    background-color: rgba(65, 32, 138, 0.4); /* #41208A */
+    border: 1px solid rgba(65, 32, 138, 0.6);
+    border-radius: 8px;
+}
+
+/* При выборе: округлая рамка с более насыщенным цветом */
+QListView::item:selected {
+    background-color: rgba(65, 32, 138, 0.6); /* #41208A */
+    border: 1px solid rgba(65, 32, 138, 0.9);
+    border-radius: 8px;
+    outline: none;
+}
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListView" name="DatesListView">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>760</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>760</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/* Общий стиль для QListView: прозрачный фон и отсутствие рамки */
+QListView {
+    /*background: transparent;*/
+    border: none;
+}
+
+/* Устанавливаем прозрачный фон для области, где отрисовываются элементы */
+QListView::viewport {
+    background: transparent;
+}
+
+/* Обычное состояние элемента с прозрачной рамкой */
+QListView::item {
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 5px;
+}
+
+/* При наведении: добавляем округлую рамку */
+QListView::item:hover {
+    background-color: rgba(112, 69, 211, 0.2); /* Светлый фиолетовый */
+    border: 1px solid rgba(112, 69, 211, 0.5);
+    border-radius: 8px;
+}
+
+/* При нажатии: используем твой основной цвет */
+QListView::item:pressed {
+    background-color: rgba(65, 32, 138, 0.4); /* #41208A */
+    border: 1px solid rgba(65, 32, 138, 0.6);
+    border-radius: 8px;
+}
+
+/* При выборе: округлая рамка с более насыщенным цветом */
+QListView::item:selected {
+    background-color: rgba(65, 32, 138, 0.6); /* #41208A */
+    border: 1px solid rgba(65, 32, 138, 0.9);
+    border-radius: 8px;
+    outline: none;
+}
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

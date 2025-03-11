@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SecondWindow</class>
+ <widget class="QMainWindow" name="SecondWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1400</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>build/Desktop_Qt_6_8_2_MinGW_64_bit-Debug/icon.png</normaloff>build/Desktop_Qt_6_8_2_MinGW_64_bit-Debug/icon.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+    background-image: url(bg.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-origin: content;
+}
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>0</y>
+      <width>1131</width>
+      <height>811</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>20</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QListView" name="seminarListView">
+       <property name="maximumSize">
+        <size>
+         <width>380</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QListView {
+    background: transparent;
+    border: none;
+}
+QListView::viewport {
+    background: transparent;
+}
+QListView::item {
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 5px;
+}
+
+QListView::item:hover {
+    background-color: rgba(112, 69, 211, 0.2);
+    border: 1px solid rgba(112, 69, 211, 0.5);
+    border-radius: 8px;
+}
+QListView::item:pressed {
+    background-color: rgba(65, 32, 138, 0.4);
+    border: 1px solid rgba(65, 32, 138, 0.6);
+    border-radius: 8px;
+}
+QListView::item:selected {
+    background-color: rgba(65, 32, 138, 0.6);
+    border: 1px solid rgba(65, 32, 138, 0.9);
+    border-radius: 8px;
+    outline: none;
+}
+QListView::item:focus {
+	outline: none;
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableView" name="attendanceTableView">
+       <property name="minimumSize">
+        <size>
+         <width>800</width>
+         <height>200</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>500</width>
+         <height>780</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>12</pointsize>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTableView {
+    background-color: transparent;
+    color: white;
+    border: none;
+    gridline-color: rgba(255, 255, 255, 0.2);
+    selection-background-color: rgba(112, 69, 211, 0.8);
+    selection-color: white;
+    font-family: &quot;ALS Sector Regular&quot;;
+    font-size: 12pt;
+    font-weight: normal;
+}
+QTableView::item:selected {
+    border: none;
+    background-color: rgba(112, 69, 211, 0.8);
+}
+QTableView::item:hover {
+    background-color: rgba(112, 69, 211, 0.6);
+}
+QTableView::item:pressed {
+    background-color: rgba(65, 32, 138, 1);
+}
+QHeaderView::section {
+    background-color: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    font-size: 12pt;
+    font-family: &quot;ALS Sector Regular&quot;;
+    padding: 5px;
+}
+QTableCornerButton::section {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}</string>
+       </property>
+       <property name="cornerButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>271</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="putMarkButton">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>-1</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);
+    color: white;
+    border: 1px solid rgba(65, 32, 138, 0.8);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);
+    border: 1px solid rgba(112, 69, 211, 1);
+}
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);
+    border: 1px solid rgba(65, 32, 138, 1);
+}
+QPushButton:focus {
+    outline: none;
+    border: 2px solid rgba(112, 69, 211, 1);
+}</string>
+       </property>
+       <property name="text">
+        <string>Поставить отметку</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="markSelectComboBox">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>-1</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox {
+    background-color: rgba(65, 32, 138, 0.6);
+    color: white;
+    border: 1px solid rgba(65, 32, 138, 0.8);
+    border-radius: 12px;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+QComboBox:hover {
+    background-color: rgba(112, 69, 211, 0.8);
+    border: 1px solid rgba(112, 69, 211, 1);
+}
+QComboBox:focus {
+    background-color: rgba(112, 69, 211, 0.9);
+    border: 2px solid rgba(112, 69, 211, 1);
+    outline: none;
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 30px;
+    border-left: 1px solid rgba(65, 32, 138, 0.8);
+}
+QComboBox::down-arrow {
+    width: 14px;
+    height: 14px;
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="saveChangesButton">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>-1</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);
+    color: white;
+    border: 1px solid rgba(65, 32, 138, 0.8);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);
+    border: 1px solid rgba(112, 69, 211, 1);
+}
+
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);
+    border: 1px solid rgba(65, 32, 138, 1);
+}
+
+QPushButton:focus {
+    outline: none;
+    border: 2px solid rgba(112, 69, 211, 1);
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Сохранить изменения</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="goBackButton">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>-1</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background-color: rgba(65, 32, 138, 0.6);
+    color: white;
+    border: 1px solid rgba(65, 32, 138, 0.8);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(112, 69, 211, 0.8);
+    border: 1px solid rgba(112, 69, 211, 1);
+}
+
+QPushButton:pressed {
+    background-color: rgba(65, 32, 138, 1);
+    border: 1px solid rgba(65, 32, 138, 1);
+}
+
+QPushButton:focus {
+    outline: none;
+    border: 2px solid rgba(112, 69, 211, 1);
+}
+</string>
+       </property>
+       <property name="text">
+        <string>Вернуться к семинарам</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
