@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "Seminar.h"
 #include <QStringListModel>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
@@ -30,12 +31,31 @@ MainWindow::MainWindow(QWidget *parent)
     ui->logoGraphicView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->logoGraphicView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     item->setPos((viewSize.width() - scaledPixmap.width()) / 2, (viewSize.height() - scaledPixmap.height()) / 2);
+
+    seminarModel = new QStandardItemModel(this);
+    ui->seminarListView->setModel(seminarModel);
+    connect(ui->addSeminarButton, &QPushButton::clicked, this, &MainWindow::onAddSeminarButtonClicked);
 }
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+void MainWindow::onAddSeminarButtonClicked()
+{
+    QString name = ui->addSeminarLineEdit->text();
+
+    for (auto seminar : seminars)
+    {
+        if (seminar.name == name) throw std::invalid_argument("Семинар уже существет");
+    }
+    if (name.isEmpty()) throw std::invalid_argument("Имя семинара не может быть пустым");
+    Seminar new_seminar(name);
+    seminars.push_back(new_seminar);
+    QStandardItem *item = new QStandardItem(new_seminar.name);
+    seminarModel->appendRow(item);
+    ui->addSeminarLineEdit->clear();
+}
 
 
 

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "Seminar.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,5 +20,10 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    std::vector<Seminar> seminars;
+    QStandardItemModel *seminarModel;
+
+private slots:
+    void onAddSeminarButtonClicked();
 };
 #endif // MAINWINDOW_H

@@ -2,8 +2,18 @@
 #include <QStandardItemModel>
 #include <qdatetime.h>
 
+Seminar::Seminar(QString name)
+{
+    std::vector<Student> students = {};
+    std::vector<QDate> dates = {};
+    this->name = name;
+    this->dates = dates;
+    this->students = students;
+}
+
 void Seminar::changeName(QString new_name)
 {
+    if (new_name.isEmpty()) throw std::invalid_argument("Имя не может быть пустым");
     name = new_name;
 }
 
@@ -49,3 +59,4 @@ void Seminar::editDate(QDate old_date, QDate new_date)
         student.marks[new_date] = mark_value;
     }
 }
+

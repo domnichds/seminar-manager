@@ -15,11 +15,10 @@ struct Student
 
 class Seminar
 {
-private:
+public:
     QString name;
     std::vector<Student> students;
     std::vector<QDate> dates;
-public:
     Seminar(QString); // Строит Seminar без дат и студентов
     void changeName(QString); // Изменяет имя семинара
     void addDate(QDate); // Добавляет дату
