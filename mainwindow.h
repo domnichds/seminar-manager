@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QItemSelection>
 #include "Seminar.h"
 
 QT_BEGIN_NAMESPACE
@@ -20,10 +21,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    void log(QString);
     std::vector<Seminar> seminars;
     QStandardItemModel *seminarModel;
 
 private slots:
     void onAddSeminarButtonClicked();
+    void onSeminarSelected(const QItemSelection&, const QItemSelection&);
+    void onChangeSeminarNameButtonClicked();
 };
 #endif // MAINWINDOW_H

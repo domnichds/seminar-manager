@@ -7,7 +7,6 @@
 #include <QPixmap>
 #include <QDebug>
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -35,30 +34,69 @@ MainWindow::MainWindow(QWidget *parent)
     seminarModel = new QStandardItemModel(this);
     ui->seminarListView->setModel(seminarModel);
     connect(ui->addSeminarButton, &QPushButton::clicked, this, &MainWindow::onAddSeminarButtonClicked);
+    connect(ui->seminarListView->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, &MainWindow::onSeminarSelected);
+    connect(ui->changeSeminarButton, &QPushButton::clicked, this, &MainWindow::onChangeSeminarNameButtonClicked);
 }
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+void MainWindow::log(QString message)
+{
+    ui->systemMesssgeLable->setText(message);
+}
+
 void MainWindow::onAddSeminarButtonClicked()
 {
     QString name = ui->addSeminarLineEdit->text();
 
-    for (auto seminar : seminars)
+    for (auto &seminar : seminars)
     {
-        if (seminar.name == name) throw std::invalid_argument("Семинар уже существет");
+        if (seminar.name == name) {log(QString::fromStdString("Семинар уже существет")); return;}
     }
-    if (name.isEmpty()) throw std::invalid_argument("Имя семинара не может быть пустым");
+    if (name.isEmpty()) {log(QString::fromStdString("Имя семинара не может быть пустым")); return;}
     Seminar new_seminar(name);
     seminars.push_back(new_seminar);
     QStandardItem *item = new QStandardItem(new_seminar.name);
+    item->setData(name, Qt::UserRole);
     seminarModel->appendRow(item);
     ui->addSeminarLineEdit->clear();
 }
+void MainWindow::onChangeSeminarNameButtonClicked()
+{
+    QModelIndex currentIndex = ui->seminarListView->currentIndex();
+    if (!currentIndex.isValid()) {log(QString::fromStdString("Необходимо выбрать семинар")); return;}
 
+    QString oldSeminarName = currentIndex.data(Qt::UserRole).toString();
+    QString newSeminarName = ui->changeSeminarLineEdit->text().trimmed();
 
+    if (newSeminarName.isEmpty()) {log(QString::fromStdString("Имя семинара не может быть пустым")); return;}
+    for (auto &seminar : seminars) {
+        if (seminar.name == oldSeminarName) {
+            seminar.name = newSeminarName;
+            break;
+        }
+    }
 
+    QStandardItem *item = seminarModel->itemFromIndex(currentIndex);
+    if (item) {
+        item->setText(newSeminarName);
+        item->setData(newSeminarName, Qt::UserRole); // Обновляем хранимое значение
+    }
+}
+
+void MainWindow::onSeminarSelected(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    if (selected.indexes().isEmpty()) return;
+    QModelIndex currentIndex = selected.indexes().first();
+    if (!currentIndex.isValid()) {
+        return;
+    }
+    QString seminarName = currentIndex.data(Qt::UserRole).toString();
+    ui->changeSeminarLineEdit->setText(seminarName);
+}
 /*    QStringList listDates;
     listDates << "01.02.2025" << "08.02.2025" << "15.02.2025" << "22.02.2025" << "29.02.2025" << "07.03.2025"
               << "14.03.2025" << "21.03.2025" << "28.03.2025" << "04.04.2025" << "11.04.2025" << "18.04.2025"
