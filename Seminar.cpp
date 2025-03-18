@@ -11,6 +11,23 @@ Seminar::Seminar(QString name)
     this->students = students;
 }
 
+Student::Student(QString name, const std::vector<QDate>& dates)
+{
+    this->name = name;
+    for (const auto& date : dates) {
+        marks[date] = 0;
+    }
+}
+
+void Student::changeName(QString new_name, const std::vector<Student>& students)
+{
+    for (auto& student : students)
+    {
+        if (student.name == new_name) throw std::invalid_argument("Студент с таким именем уже существует");
+    }
+    this->name = new_name;
+}
+
 void Seminar::changeName(QString new_name)
 {
     if (new_name.isEmpty()) throw std::invalid_argument("Имя не может быть пустым");
@@ -32,12 +49,7 @@ void Seminar::addDate(QDate new_date)
 
 void Seminar::deleteDate(QDate old_date)
 {
-    dates.erase((std::remove_if(dates.begin(), dates.end(),
-        [old_date](const QDate& compare_date)
-        {
-        return compare_date == old_date;
-        }
-        )), dates.end());
+    dates.erase((std::remove_if(dates.begin(), dates.end(),[old_date](const QDate& compare_date){return compare_date == old_date;})), dates.end());
     for (auto& student : students)
     {
         student.marks.erase(old_date);
@@ -60,3 +72,28 @@ void Seminar::editDate(QDate old_date, QDate new_date)
     }
 }
 
+void Seminar::addStudent(QString name)
+{
+    for (auto& student : students)
+    {
+        if (student.name == name) throw std::invalid_argument("Такой студент уже существует");
+    }
+    Student new_student(name, dates);
+    students.push_back(new_student);
+}
+
+void Seminar::deleteStudent(QString name)
+{
+    auto initialSize = students.size();
+
+    students.erase(
+        std::remove_if(students.begin(), students.end(),
+                       [&name](const Student& student) { return student.name == name; }),
+        students.end()
+        );
+
+    if (students.size() == initialSize)
+    {
+        throw std::invalid_argument("Студент не найден");
+    }
+}

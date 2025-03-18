@@ -9,8 +9,8 @@ struct Student
 {
     QString name;
     std::map<QDate, short> marks;
-    Student(QString); // Строит студента с оценками "П" (присутствовал)
-    void changeName(QString); // Изменяет имя студента
+    Student(QString, const std::vector<QDate>&);
+    void changeName(QString, const std::vector<Student>&);
 };
 
 class Seminar
@@ -26,6 +26,7 @@ public:
     void deleteDate(QDate); // Удаляет дату
     void addStudent(QString); // Добавляет нового студента
     void deleteStudent(QString); // Удаляет студента
+
 };
 
 #endif // SEMINAR_H
