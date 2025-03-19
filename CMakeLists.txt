@@ -17,8 +17,15 @@ qt_add_executable(untitled1
     secondwindow.cpp
     secondwindow.h
     ${RESOURCES}
-
-    # Подключаем сгенерированные файлы ресурсов
+    CSVHandler.h
+    CSVHandler.cpp
+    SeminarData.cpp
+    SeminarData.hpp
+    SeminarManager.cpp
+    SeminarManager.hpp
+    StudentData.cpp
+    StudentData.hpp
+    StudentManager.cpp
+    StudentManager.hpp
 )
-
 target_link_libraries(untitled1 PRIVATE Qt6::Core Qt6::Widgets)

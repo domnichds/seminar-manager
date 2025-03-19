@@ -3,7 +3,9 @@
 
 #include <QMainWindow>
 #include <QItemSelection>
-#include "Seminar.h"
+#include <QStandardItemModel>
+#include "SeminarData.hpp"
+#include "SeminarManager.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,18 +20,26 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
 private:
     Ui::MainWindow *ui;
-    void log(QString);
-    std::vector<Seminar> seminars;
+    std::vector<SeminarData> seminars;
     QStandardItemModel *seminarModel;
     QStandardItemModel *studentsModel;
     QStandardItemModel *datesModel;
 
+    void setupUI();
+    void setupConnections();
+    void log(QString message);
+
+    SeminarData* getSeminarByName(const QString&);
+    bool validateNotEmpty(const QString &input, const QString &errorMessage);
+    void updateStudentAndDateModels(SeminarData* seminar);
+
 private slots:
     void onAddSeminarButtonClicked();
-    void onSeminarSelected(const QItemSelection&, const QItemSelection&);
-    void onStudentSelected(const QItemSelection&, const QItemSelection&);
+    void onSeminarSelected(const QItemSelection& selected, const QItemSelection& deselected);
+    void onStudentSelected(const QItemSelection& selected, const QItemSelection& deselected);
     void onChangeSeminarNameButtonClicked();
     void onDeleteSeminarButtonClicked();
     void onAddDateButtonClicked();
@@ -39,4 +49,5 @@ private slots:
     void onChangeStudentNameButtonClicked();
     void onDeleteStudentButtonClicked();
 };
+
 #endif // MAINWINDOW_H

@@ -577,7 +577,7 @@ QPushButton:focus {
       </widget>
      </item>
      <item row="9" column="2">
-      <widget class="QDateEdit" name="changeDateEdit">
+      <widget class="QDateEdit" name="editDateEdit">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -707,7 +707,7 @@ QLineEdit:!empty {
       </widget>
      </item>
      <item row="9" column="1">
-      <widget class="QPushButton" name="changeDateButton">
+      <widget class="QPushButton" name="editDateButton">
        <property name="enabled">
         <bool>true</bool>
        </property>

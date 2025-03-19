@@ -1,12 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "Seminar.h"
+#include "SeminarData.hpp"
+#include "SeminarManager.hpp"
+#include "StudentManager.hpp"
 #include <QStringListModel>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 #include <QDebug>
 #include <QMessageBox>
+#include <QStandardItemModel>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -14,6 +17,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setFixedSize(this->size());
     this->setWindowIcon(QIcon("icon.png"));
 
+    setupUI();
+    setupConnections();
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::setupUI()
+{
+    // Установка логотипа
     QGraphicsScene *scene = new QGraphicsScene(this);
     ui->logoGraphicView->setScene(scene);
     QPixmap pixmap("logo.png");
@@ -30,13 +45,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->logoGraphicView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     item->setPos((viewSize.width() - scaledPixmap.width()) / 2, (viewSize.height() - scaledPixmap.height()) / 2);
 
+    // Инициализация моделей
     studentsModel = new QStandardItemModel(this);
     datesModel = new QStandardItemModel(this);
     seminarModel = new QStandardItemModel(this);
     ui->studentsListView->setModel(studentsModel);
     ui->datesListView->setModel(datesModel);
     ui->seminarListView->setModel(seminarModel);
+}
 
+void MainWindow::setupConnections()
+{
     connect(ui->addSeminarButton, &QPushButton::clicked, this, &MainWindow::onAddSeminarButtonClicked);
     connect(ui->seminarListView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::onSeminarSelected);
     connect(ui->studentsListView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::onStudentSelected);
@@ -46,13 +65,53 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->deleteDateButton, &QPushButton::clicked, this, &MainWindow::onDeleteDateButtonClicked);
     connect(ui->editDateButton, &QPushButton::clicked, this, &MainWindow::onEditDateButtonClicked);
     connect(ui->addStudentButton, &QPushButton::clicked, this, &MainWindow::onAddStudentButtonClicked);
-    connect(ui->changeStudentButton, &QPushButton::clicked, this, &::MainWindow::onChangeStudentNameButtonClicked);
+    connect(ui->changeStudentButton, &QPushButton::clicked, this, &MainWindow::onChangeStudentNameButtonClicked);
     connect(ui->deleteStudentButton, &QPushButton::clicked, this, &MainWindow::onDeleteStudentButtonClicked);
 }
 
-MainWindow::~MainWindow()
+SeminarData* MainWindow::getSeminarByName(const QString &name)
 {
-    delete ui;
+    // Поиск семинара в векторе семинаров
+    auto it = std::find_if(seminars.begin(), seminars.end(),
+                           [&name](SeminarData &seminar)
+                           {
+                               return seminar.name == name;
+                           });
+    // При нахождении семинара возвращаем ссылку на него, иначе - nullptr
+    return (it != seminars.end()) ? &(*it) : nullptr;
+}
+
+bool MainWindow::validateNotEmpty(const QString &input, const QString &errorMessage)
+{
+    if (input.trimmed().isEmpty()) {
+        log(errorMessage);
+        return false;
+    }
+    return true;
+}
+
+void MainWindow::updateStudentAndDateModels(SeminarData* seminar)
+{
+    // Выход из метода, если передано nullptr
+    if (!seminar) return;
+
+    // Очистка списков студентов и дат
+    studentsModel->clear();
+    datesModel->clear();
+
+    // Заполнение списка студентов
+    for (const auto &student : seminar->students) {
+        QStandardItem *item = new QStandardItem(student.name);
+        item->setData(student.name, Qt::UserRole);
+        studentsModel->appendRow(item);
+    }
+
+    // Заполнение списка дат
+    for (const QDate &date : seminar->dates) {
+        QStandardItem *item = new QStandardItem(date.toString("dd.MM.yyyy")); // Перевод QDate в строку
+        item->setData(date, Qt::UserRole);
+        datesModel->appendRow(item);
+    }
 }
 
 void MainWindow::log(QString message)
@@ -61,438 +120,286 @@ void MainWindow::log(QString message)
     ui->systemMesssgeLable->setText(message);
 }
 
-void MainWindow::onAddSeminarButtonClicked() {
-    // Получаем данные из поля ввода имени семинара
-    QString name = ui->addSeminarLineEdit->text();
+void MainWindow::onSeminarSelected(const QItemSelection &selected, const QItemSelection &deselected) {
+    // Проверка на корректное выделение
+    if (selected.indexes().isEmpty()) return;
 
-    // Проверяем, есть ли семинар с таким именем в списке семинаров
-    for (auto &seminar : seminars)
-    {
-        if (seminar.name == name) {log(QString::fromStdString("Семинар уже существет")); return;}
-    }
+    // Получение индекса выбранного семинара и проверка его валидности
+    QModelIndex currentIndex = selected.indexes().first();
+    if (!currentIndex.isValid()) return;
 
-    // Проверяем имя семинара на пустую строку
-    if (name.isEmpty())
-    {
-        log(QString::fromStdString("Имя семинара не может быть пустым"));
+    // Получение имени семинара и установка его в lineEdit
+    QString seminarName = currentIndex.data(Qt::UserRole).toString();
+    ui->changeSeminarLineEdit->setText(seminarName);
+
+    // Получение ссылки на семинар
+    SeminarData* seminar = getSeminarByName(seminarName);
+    if (!seminar) {
+        log("Семинар не найден"); // Проверка на nullptr
         return;
     }
 
-    Seminar new_seminar(name);
-    seminars.push_back(new_seminar);
+    // Обновление списка дат и студентов
+    updateStudentAndDateModels(&(*seminar));
+}
 
-    // Добавляем объект созданного семинара в список seminarListView
-    QStandardItem *item = new QStandardItem(new_seminar.name);
-    item->setData(new_seminar.name, Qt::UserRole);
+void MainWindow::onStudentSelected(const QItemSelection &selected, const QItemSelection &deselected) {
+    // Проверка на пустой выбор
+    if (selected.indexes().isEmpty()) {
+        return;
+    }
+
+    // Получение индекса выбранного студента и проверка на валидность
+    QModelIndex studentIndex = selected.indexes().first();
+    if (!studentIndex.isValid()) return;
+
+    // Извлечение имени студента и установка его в lineEdit
+    QString studentName = studentIndex.data(Qt::UserRole).toString();
+    ui->changeStudentLineEdit->setText(studentName);
+}
+
+void MainWindow::onAddSeminarButtonClicked() {
+    // Получаем имя семинара
+    QString name = ui->addSeminarLineEdit->text().trimmed();
+
+    // Проверка на пустое имя
+    if (name.isEmpty()) {
+        log("Имя семинара не может быть пустым");
+        return;
+    }
+
+    // Проверка на дубликаты
+    if (getSeminarByName(name)) {
+        log("Семинар уже существует");
+        return;
+    }
+
+    // Создание SeminarData и добавление его в вектор семинаров
+    seminars.emplace_back(name);
+
+    // Обновление UI
+    QStandardItem *item = new QStandardItem(name);
+    item->setData(name, Qt::UserRole);
     seminarModel->appendRow(item);
-
-    // Очищаем поле ввода имени семинара
     ui->addSeminarLineEdit->clear();
-    log(QString::fromStdString("Семинар успешно добавлен"));
+    log("Семинар успешно добавлен");
 }
 
 void MainWindow::onChangeSeminarNameButtonClicked()
 {
-    // Получаем индекс выбранного элемента
+    // Получение индекса выбранного элемента и проверка на корректный выбор
     QModelIndex currentIndex = ui->seminarListView->currentIndex();
-
-    // Проверяем, действительно ли пользователь выбрал семинар
-    if (!currentIndex.isValid())
-    {
-        log(QString::fromStdString("Необходимо выбрать семинар"));
+    if (!currentIndex.isValid()) {
+        log("Необходимо выбрать семинар");
         return;
     }
-
-    // Получаем данные о старом и новом семинаре
+    // Получение имени выделенного семинара
     QString oldSeminarName = currentIndex.data(Qt::UserRole).toString();
+
+    // Получение имени семинара из поля ввода
     QString newSeminarName = ui->changeSeminarLineEdit->text().trimmed();
 
-    // Проверяем, что имя нового семинара не пустая строка
-    if (newSeminarName.isEmpty())
-    {
-        log(QString::fromStdString("Имя семинара не может быть пустым"));
-        return;
-    }
+    // Поиск семинара в векторе семинаров
     for (auto &seminar : seminars) {
         if (seminar.name == oldSeminarName)
         {
-            seminar.name = newSeminarName;
-            break;
+            // Создание менеджера семинара
+            SeminarManager manager(&seminar);
+            // Изменение имени семинара и отлов ошибок
+            try {
+                manager.changeName(newSeminarName);
+            }
+            catch (const std::invalid_argument& e) {
+                log(e.what());
+                return;
+            }
+
+            // Обновление модели
+            QStandardItem *item = seminarModel->itemFromIndex(currentIndex);
+            if (item) {
+                item->setText(newSeminarName);
+                item->setData(newSeminarName, Qt::UserRole);
+            }
+
+            log("Имя семинара изменено");
+            return; // Выход из метода после успешного изменения имени
         }
     }
 
-    // Устанавливаем новый текст для объекта списка
-    QStandardItem *item = seminarModel->itemFromIndex(currentIndex);
-    if (item) {
-        item->setText(newSeminarName);
-    }
-
-    log(QString::fromStdString("Имя семинара изменено"));
-}
-
-void MainWindow::onSeminarSelected(const QItemSelection &selected, const QItemSelection &deselected) {
-    // Выходим из метода, если ничего не выбрано
-    if (selected.indexes().isEmpty()) return;
-
-    // Получаем индекс первого из выбранных элементов (исключительно косметическое, в данной задаче
-    // мы не можем выбрать более одного семинара)
-    QModelIndex currentIndex = selected.indexes().first();
-    if (!currentIndex.isValid())
-    {
-        return;
-    }
-
-    // Получаем имя выбранного семинара и устанавливаем его в поле для редактирования
-    QString seminarName = currentIndex.data(Qt::UserRole).toString();
-    ui->changeSeminarLineEdit->setText(seminarName);
-
-    // Ищем семинар в векторе
-    auto it = std::find_if(seminars.begin(), seminars.end(),
-                           [&seminarName](const Seminar& seminar) { return seminar.name == seminarName; });
-    if (it == seminars.end())
-    {
-        log(QString::fromStdString("Семинар не найден"));
-        return;
-    }
-
-    // Очищаем списки дат и студентов, а после заполняем их новыми данными
-    studentsModel->clear();
-    datesModel->clear();
-    for (const auto& student : it->students) {
-        QStandardItem *item = new QStandardItem(student.name);
-        item->setData(student.name, Qt::UserRole);
-        studentsModel->appendRow(item);
-    }
-    for (const QDate& date : it->dates) {
-        QStandardItem *dateItem = new QStandardItem(date.toString("dd.MM.yyyy"));
-        dateItem->setData(date, Qt::UserRole);
-        datesModel->appendRow(dateItem);
-    }
-}
-
-void MainWindow::onStudentSelected(const QItemSelection &selected, const QItemSelection &deselected)
-{
-    // Выходим если ничего не выбрано
-    if (selected.indexes().isEmpty()) {
-        ui->changeStudentLineEdit->clear(); // Очищаем поле при снятии выбора
-        return;
-    }
-
-    // Получаем индекс выбранного студента
-    QModelIndex studentIndex = selected.indexes().first();
-    if (!studentIndex.isValid()) return;
-
-    // Извлекаем имя студента из UserRole
-    QString studentName = studentIndex.data(Qt::UserRole).toString();
-
-    // Устанавливаем имя в поле редактирования
-    ui->changeStudentLineEdit->setText(studentName);
-}
-
-void MainWindow::onChangeStudentNameButtonClicked()
-{
-    // Получаем индекс выбранного семинара и проверяем, выбран ли какой-то семинар
-    QModelIndex seminarIndex = ui->seminarListView->currentIndex();
-    if (!seminarIndex.isValid())
-    {
-        log(QString::fromStdString("Необходимо выбрать семинар"));
-        return;
-    }
-    QString seminarName = seminarIndex.data(Qt::UserRole).toString();
-
-    // Ищем семинар в списке
-    auto seminarIt = std::find_if(seminars.begin(), seminars.end(),
-                           [&seminarName](const Seminar& seminar) { return seminar.name == seminarName; });
-    if (seminarIt == seminars.end())
-    {
-        log(QString::fromStdString("Семинар не найден"));
-        return;
-    }
-
-
-    // Получаем индекс выбранного студента и проверяем, выбран ли какой-то студент
-    QModelIndex studentIndex = ui->studentsListView->currentIndex();
-    if (!studentIndex.isValid()) {
-        log(QString::fromStdString("Необходимо выбрать студента"));
-        return;
-    }
-    QString oldName = studentIndex.data(Qt::UserRole).toString();
-
-    // Получаем новое имя из поля ввода
-    QString newName = ui->changeStudentLineEdit->text().trimmed();
-    if (newName.isEmpty()) {
-        log(QString::fromStdString("Имя студента не может быть пустым"));
-        return;
-    }
-
-    // Ищем студента в семинаре
-    auto studentIt = std::find_if(seminarIt->students.begin(), seminarIt->students.end(),
-                                  [&oldName](const Student& s) { return s.name == oldName; });
-    if (studentIt == seminarIt->students.end()) {
-        log(QString::fromStdString("Студент не найден"));
-        return;
-    }
-
-    // Изменяем имя студента и отлавливаем исключения
-    try
-    {
-        studentIt->changeName(newName, seminarIt->students);
-    }
-    catch (const std::invalid_argument& e)
-    {
-        log(QString::fromStdString(e.what()));
-        return;
-    }
-
-    // Обновляем элемент в модели
-    QStandardItem* item = studentsModel->item(studentIndex.row());
-    item->setText(newName);
-    item->setData(newName, Qt::UserRole); // Обновляем UserRole
-    log(QString::fromStdString("Имя студента изменено"));
+    log("Семинар не найден"); // Если цикл не нашел seminar.name == oldSeminarName
 }
 
 void MainWindow::onDeleteSeminarButtonClicked()
 {
-    // Получаем индекс выбранного семинара и проверяем выбран ли какой-то семинар
+    // Получение индекса семинара
     QModelIndex currentIndex = ui->seminarListView->currentIndex();
-    if (!currentIndex.isValid())
-    {
-        log(QString::fromStdString("Необходимо выбрать семинар"));
+    if (!currentIndex.isValid()) {
+        log("Необходимо выбрать семинар");
         return;
     }
+
+    // Получение имени семинара
     QString seminarName = currentIndex.data(Qt::UserRole).toString();
 
-    // Создаем окно с подтверждением удаления семинара
+    // Диалог подтверждения
     QMessageBox confirmBox;
     confirmBox.setWindowTitle("Удаление семинара");
     confirmBox.setText("Вы действительно хотите удалить семинар \"" + seminarName + "\"?");
     confirmBox.setIcon(QMessageBox::Question);
-    QPushButton *yesButton = confirmBox.addButton("Удалить", QMessageBox::YesRole);
-    QPushButton *noButton = confirmBox.addButton("Отмена", QMessageBox::NoRole);
+    confirmBox.addButton("Удалить", QMessageBox::YesRole);
+    confirmBox.addButton("Отмена", QMessageBox::NoRole);
+    if (confirmBox.exec() == QMessageBox::No) return;
 
-    // Выводим окно на экран
-    confirmBox.exec();
+    // Удаление семинара из вектора семинаров
+    seminars.erase(
+        std::remove_if(seminars.begin(), seminars.end(),
+                       [&seminarName](const SeminarData& seminar) {
+                           return seminar.name == seminarName;
+                       }),
+        seminars.end()
+        );
 
-    // Если выбрали "Отмена", то выходим из метода
-    if (confirmBox.clickedButton() == noButton) return;
-
-    // Удаляем семинар из вектора, если выбрано "Удалить"
-    seminars.erase(std::remove_if(seminars.begin(), seminars.end(), [&seminarName](const Seminar& seminar)
-                                  {return seminar.name == seminarName;}), seminars.end());
-
-    // Удаляем семинар из списка
+    // Обновление UI
     seminarModel->removeRow(currentIndex.row());
-
-    // Очищаем списки студентов и дат
     studentsModel->clear();
     datesModel->clear();
-
-    // Сбрасываем selection, чтобы избежать ошибок
     ui->seminarListView->selectionModel()->clearSelection();
-    log(QString::fromStdString("Семинар успешно удален"));
-}
-
-void MainWindow::onAddDateButtonClicked()
-{
-    // Получаем индекс и проверяем выбран ли какой-то семинар
-    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
-    if (!currentSeminarIndex.isValid())
-    {
-        log(QString::fromStdString("Необходимо выбрать семинар"));
-        return;
-    }
-    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
-
-    // Ищем семинар в списке
-    auto it = std::find_if(seminars.begin(), seminars.end(),
-                           [&seminarName](const Seminar& seminar) { return seminar.name == seminarName; });
-    if (it == seminars.end())
-    {
-        log(QString::fromStdString("Семинар не найден"));
-        return;
-    }
-
-    // Получаем дату из поля ввода
-    QDate currentDate = ui->addDateEdit->date();
-
-    // Добавляем дату в seminar и отлавливаем исключения
-    try
-    {
-        it->addDate(currentDate);
-    }
-    catch (const std::invalid_argument& e)
-    {
-        log(e.what()); return;
-    }
-
-    // Добавляем новую дату в список
-    QStandardItem *dateItem = new QStandardItem(currentDate.toString("dd.MM.yyyy"));
-    dateItem->setData(currentDate, Qt::UserRole);
-    datesModel->appendRow(dateItem);
-    log(QString::fromStdString("Дата успешно добавлена"));
-}
-
-void MainWindow::onDeleteDateButtonClicked()
-{
-    // Получаем текущий идекс семинара и проверяем, выбран ли какой-то семинар
-    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
-    if (!currentSeminarIndex.isValid()) {
-        log(QString::fromStdString("Необходимо выбрать семинар"));
-        return;
-    }
-    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
-
-    // Ищем семинар в списке семинаров
-    auto it = std::find_if(seminars.begin(), seminars.end(),
-                           [&seminarName](const Seminar& seminar) { return seminar.name == seminarName; });
-    if (it == seminars.end())
-    {
-        log(QString::fromStdString("Семинар не найден"));
-        return;
-    }
-
-    // Получаем текущий иднекс даты и проверяем, выбрана ли какая-то дата
-    QModelIndex currentDateIndex = ui->datesListView->currentIndex();
-    if (!currentDateIndex.isValid()) {
-        log(QString::fromStdString("Необходимо выбрать дату для удаления"));
-        return;
-    }
-    QDate selectedDate = currentDateIndex.data(Qt::UserRole).toDate();
-
-    // Удаляем дату и отлавливаем исключения. В данном случае они не выбрасываются, однако
-    // такая логика полезна для масштабирования (его не будет, мы сдадим это и забудем)
-    try
-    {
-        it->deleteDate(selectedDate);
-    }
-    catch (const std::exception &e)
-    {
-        log(QString::fromStdString(e.what()));
-        return;
-    }
-
-    // Удаляем строку с датой
-    datesModel->removeRow(currentDateIndex.row());
-    log(QString::fromStdString("Дата успешно удалена"));
-}
-
-void MainWindow::onEditDateButtonClicked()
-{
-    // Получаем индекс семинара и проверяем, выбрал ли какой-то семинар
-    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
-    if (!currentSeminarIndex.isValid()) {
-        log(QString::fromStdString("Необходимо выбрать семинар"));
-        return;
-    }
-    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
-
-    // Ищем семинар в списки семинаров
-    auto it = std::find_if(seminars.begin(), seminars.end(),
-                           [&seminarName](const Seminar& seminar) { return seminar.name == seminarName; });
-    if (it == seminars.end())
-    {
-        log(QString::fromStdString("Семинар не найден"));
-        return;
-    }
-
-    // Получаем индекс даты и проверям, выбрана ли какая-то дата
-    QModelIndex currentDateIndex = ui->datesListView->currentIndex();
-    if (!currentDateIndex.isValid())
-    {
-        log(QString::fromStdString("Необходимо выбрать дату для изменения"));
-        return;
-    }
-    QDate oldDate = currentDateIndex.data(Qt::UserRole).toDate();
-
-    // Получаем новую дату и изменяем старую, отлавливая исключения
-    QDate newDate = ui->editDateEdit->date();
-    try
-    {
-        it->editDate(oldDate, newDate);
-    }
-    catch (const std::invalid_argument& e)
-    {
-        log(QString::fromStdString(e.what()));
-        return;
-    }
-
-    // Обновляем элемент списка
-    QStandardItem *item = datesModel->itemFromIndex(currentDateIndex);
-    item->setData(newDate, Qt::UserRole);
-    item->setText(newDate.toString("dd.MM.yyyy"));
-    log(QString::fromStdString("Дата успешно изменена"));
+    log("Семинар успешно удален");
 }
 
 void MainWindow::onAddStudentButtonClicked()
 {
-    // Получаем индекс семинара и проверяем, выбран ли какой-то семинар
+    // Получение индекса семинара
     QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
     if (!currentSeminarIndex.isValid()) {
-        log(QString::fromStdString("Необходимо выбрать семинар"));
+        log("Необходимо выбрать семинар");
         return;
     }
+
+    // Получение имени семинара
     QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
 
-    // Ищем семинар в списке семинаров
-    auto it = std::find_if(seminars.begin(), seminars.end(),
-                           [&seminarName](const Seminar& seminar) { return seminar.name == seminarName; });
-    if (it == seminars.end()) {
-        log(QString::fromStdString("Семинар не найден"));
+    // Получение семинара по имени
+    SeminarData* seminar = getSeminarByName(seminarName);
+    if (!seminar) {
+        log("Семинар не найден");
         return;
     }
 
-    // Получаем имя студента и проверяем не пусто ли оно
+    // Получение имени студента и проверка на пустоту
     QString studentName = ui->addStudentLineEdit->text().trimmed();
     if (studentName.isEmpty()) {
-        log(QString::fromStdString("Имя студента не может быть пустым"));
+        log("Имя студента не может быть пустым");
         return;
     }
 
-    // Добавляем студента в вектор студентов и отлавливаем ошибки
-    try
-    {
-    it->addStudent(studentName);
+    // Добавление студента через SeminarManager и отлов исключений
+    try {
+        SeminarManager manager(&(*seminar));
+        manager.addStudent(studentName);
     }
-    catch (const std::invalid_argument& e)
-    {
-        log(QString::fromStdString(e.what()));
+    catch (const std::invalid_argument& e) {
+        log(e.what());
         return;
     }
 
-    // Добавляем студента в список
-    QStandardItem *studentItem = new QStandardItem(studentName);
+    // Обновление UI
+    QStandardItem* studentItem = new QStandardItem(studentName);
     studentItem->setData(studentName, Qt::UserRole);
     studentsModel->appendRow(studentItem);
-
-    // Очищаем поле ввода имени
     ui->addStudentLineEdit->clear();
-    log(QString::fromStdString("Студент успешно добавлен"));
+    log("Студент успешно добавлен");
 }
 
-void MainWindow::onDeleteStudentButtonClicked()
+void MainWindow::onChangeStudentNameButtonClicked()
 {
-    // Проверяем, выбран ли семинар
+    // Получение индекса семинара и проверка его валидности
     QModelIndex seminarIndex = ui->seminarListView->currentIndex();
     if (!seminarIndex.isValid()) {
-        log(QString::fromStdString("Необходимо выбрать семинар"));
+        log("Необходимо выбрать семинар");
         return;
     }
+
+    // Получение имени семинара
     QString seminarName = seminarIndex.data(Qt::UserRole).toString();
 
-    // Ищем семинар в векторе
-    auto seminarIt = std::find_if(seminars.begin(), seminars.end(),
-                                  [&seminarName](const Seminar& seminar) { return seminar.name == seminarName; });
-    if (seminarIt == seminars.end()) {
-        log(QString::fromStdString("Семинар не найден"));
+    // Получение семинара по имени и проверка на корректность выбора
+    SeminarData* seminar = getSeminarByName(seminarName);
+    if (!seminar) {
+        log("Семинар не найден");
         return;
     }
 
-    // Проверяем, выбран ли студент
+    // Проверка выбора студента
     QModelIndex studentIndex = ui->studentsListView->currentIndex();
     if (!studentIndex.isValid()) {
-        log(QString::fromStdString("Необходимо выбрать студента"));
+        log("Необходимо выбрать студента");
         return;
     }
+
+    // Получение старого имени из индекса студента и нового из lineEdit
+    QString oldName = studentIndex.data(Qt::UserRole).toString();
+    QString newName = ui->changeStudentLineEdit->text().trimmed();
+
+    // Проверка на пустое имя
+    if (newName.isEmpty()) {
+        log("Имя студента не может быть пустым");
+        return;
+    }
+
+    // Поиск студента в векторе студентов
+    auto studentIt = std::find_if(seminar->students.begin(), seminar->students.end(),
+                                  [&oldName](const StudentData& s) {
+                                      return s.name == oldName;
+                                  });
+    if (studentIt == seminar->students.end()) {
+        log("Студент не найден");
+        return;
+    }
+
+    // Изменение имени через studentManager и отлов исключений
+    try {
+        StudentManager manager(&(*studentIt));
+        manager.changeName(newName, seminar->students);
+    }
+    catch (const std::invalid_argument& e) {
+        log(e.what());
+        return;
+    }
+
+    // Обновление UI
+    QStandardItem* item = studentsModel->item(studentIndex.row());
+    item->setText(newName);
+    item->setData(newName, Qt::UserRole);
+    log("Имя студента изменено");
+}
+
+void MainWindow::onDeleteStudentButtonClicked() {
+    // Получение индекса семинара
+    QModelIndex seminarIndex = ui->seminarListView->currentIndex();
+    if (!seminarIndex.isValid()) {
+        log("Необходимо выбрать семинар");
+        return;
+    }
+
+    // Получение имени семинара
+    QString seminarName = seminarIndex.data(Qt::UserRole).toString();
+
+    // Получение семинара по имени
+    SeminarData* seminar = getSeminarByName(seminarName);
+    if (!seminar) {
+        log("Семинар не найден");
+        return;
+    }
+
+    // Получение индекса студента
+    QModelIndex studentIndex = ui->studentsListView->currentIndex();
+    if (!studentIndex.isValid()) {
+        log("Необходимо выбрать студента");
+        return;
+    }
+
+    // Получение имени студента
     QString studentName = studentIndex.data(Qt::UserRole).toString();
 
     // Подтверждение удаления
@@ -500,20 +407,158 @@ void MainWindow::onDeleteStudentButtonClicked()
     confirmBox.setWindowTitle("Удаление студента");
     confirmBox.setText("Вы действительно хотите удалить студента \"" + studentName + "\"?");
     confirmBox.setIcon(QMessageBox::Question);
-    QPushButton* yesButton = confirmBox.addButton("Удалить", QMessageBox::YesRole);
-    QPushButton* noButton = confirmBox.addButton("Отмена", QMessageBox::NoRole);
-    confirmBox.exec();
+    confirmBox.addButton("Удалить", QMessageBox::YesRole);
+    confirmBox.addButton("Отмена", QMessageBox::NoRole);
+    if (confirmBox.exec() == QMessageBox::No) return;
 
-    if (confirmBox.clickedButton() == noButton) return;
+    // Удаление студента через SeminarManager и отлов исключений
+    try {
+        SeminarManager manager(&(*seminar));
+        manager.deleteStudent(studentName);
+    }
+    catch (const std::invalid_argument& e) {
+        log(e.what());
+        return;
+    }
 
-    // Удаляем студента из данных
-    seminarIt->deleteStudent(studentName);
-
-    // Удаляем студента из модели
+    // Обновление UI
     studentsModel->removeRow(studentIndex.row());
-
-    // Очищаем поле редактирования
     ui->changeStudentLineEdit->clear();
+    log("Студент успешно удалён");
+}
 
-    log(QString::fromStdString("Студент успешно удалён"));
+void MainWindow::onAddDateButtonClicked()
+{
+    // Получение индекса семинара
+    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
+    if (!currentSeminarIndex.isValid()) {
+        log("Необходимо выбрать семинар");
+        return;
+    }
+
+    // Получение имени семинара
+    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
+
+    // Получение семинара по имени и проверка егр валидности
+    SeminarData* seminar = getSeminarByName(seminarName);
+    if (!seminar) {
+        log("Семинар не найден");
+        return;
+    }
+
+    // Получение даты из поля
+    QDate currentDate = ui->addDateEdit->date();
+
+    // Добавление даты через SeminarManager и отлов исключений
+    try {
+        SeminarManager manager(&(*seminar));
+        manager.addDate(currentDate);
+    }
+    catch (const std::invalid_argument& e) {
+        log(e.what());
+        return;
+    }
+
+    // Обновление UI
+    QStandardItem* dateItem = new QStandardItem(currentDate.toString("dd.MM.yyyy"));
+    dateItem->setData(currentDate, Qt::UserRole);
+    datesModel->appendRow(dateItem);
+    log("Дата успешно добавлена");
+}
+
+void MainWindow::onEditDateButtonClicked()
+{
+    // Получение индекса семинара
+    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
+    if (!currentSeminarIndex.isValid()) {
+        log("Необходимо выбрать семинар");
+        return;
+    }
+
+    // Получение имени семинара
+    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
+
+    // Получение семинара по имени
+    SeminarData* seminar = getSeminarByName(seminarName);
+    if (!seminar) {
+        log("Семинар не найден");
+        return;
+    }
+
+    // Получение индекса даты
+    QModelIndex currentDateIndex = ui->datesListView->currentIndex();
+    if (!currentDateIndex.isValid()) {
+        log("Необходимо выбрать дату для изменения");
+        return;
+    }
+
+    // Получение старой даты
+    QDate oldDate = currentDateIndex.data(Qt::UserRole).toDate();
+
+    // Получение новой даты из поля редактирования даты
+    QDate newDate = ui->editDateEdit->date();
+
+    // Добавление даты через SeminarManager и отлов исключений
+    try {
+        SeminarManager manager(&(*seminar));
+        manager.editDate(oldDate, newDate);
+    }
+    catch (const std::invalid_argument& e) {
+        log(e.what());
+        return;
+    }
+
+    // Обновление UI
+    QStandardItem* item = datesModel->itemFromIndex(currentDateIndex);
+    if (item) {
+        item->setData(newDate, Qt::UserRole);
+        item->setText(newDate.toString("dd.MM.yyyy"));
+        log("Дата успешно изменена");
+    } else {
+        log("Ошибка обновления даты");
+    }
+}
+
+void MainWindow::onDeleteDateButtonClicked()
+{
+    // Получение индекса семинара
+    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
+    if (!currentSeminarIndex.isValid()) {
+        log("Необходимо выбрать семинар");
+        return;
+    }
+
+    // Получение имени семинара
+    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
+
+    // Получение семинара по имени
+    SeminarData* seminar = getSeminarByName(seminarName);
+    if (!seminar) {
+        log("Семинар не найден");
+        return;
+    }
+
+    // Получение даты и проверка ее валидности
+    QModelIndex currentDateIndex = ui->datesListView->currentIndex();
+    if (!currentDateIndex.isValid()) {
+        log("Необходимо выбрать дату для удаления");
+        return;
+    }
+
+    // Получение выбранной даты
+    QDate selectedDate = currentDateIndex.data(Qt::UserRole).toDate();
+
+    // Удаление данных через SeminarManager и отлов исключений
+    try {
+        SeminarManager manager(&(*seminar));
+        manager.deleteDate(selectedDate);
+    }
+    catch (const std::exception& e) {
+        log(e.what());
+        return;
+    }
+
+    // Удаляем дату из модели
+    datesModel->removeRow(currentDateIndex.row());
+    log("Дата успешно удалена");
 }
