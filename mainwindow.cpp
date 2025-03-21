@@ -3,6 +3,8 @@
 #include "SeminarData.hpp"
 #include "SeminarManager.hpp"
 #include "StudentManager.hpp"
+#include "secondwindow.h"
+#include "DateSortProxyModel.hpp"
 #include <QStringListModel>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
@@ -10,6 +12,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QStandardItemModel>
+#include <QSortFilterProxyModel>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -28,6 +31,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupUI()
 {
+    setWindowTitle("Редактирование списка семинаров");
+
     // Установка логотипа
     QGraphicsScene *scene = new QGraphicsScene(this);
     ui->logoGraphicView->setScene(scene);
@@ -46,12 +51,36 @@ void MainWindow::setupUI()
     item->setPos((viewSize.width() - scaledPixmap.width()) / 2, (viewSize.height() - scaledPixmap.height()) / 2);
 
     // Инициализация моделей
-    studentsModel = new QStandardItemModel(this);
-    datesModel = new QStandardItemModel(this);
     seminarModel = new QStandardItemModel(this);
-    ui->studentsListView->setModel(studentsModel);
-    ui->datesListView->setModel(datesModel);
-    ui->seminarListView->setModel(seminarModel);
+    seminarProxyModel = new QSortFilterProxyModel(this);
+    studentsModel = new QStandardItemModel(this);
+    studentsProxyModel = new QSortFilterProxyModel(this);
+    datesModel = new QStandardItemModel(this);
+    datesProxyModel = new DateSortProxyModel(this);
+    datesProxyModel = new DateSortProxyModel(this);
+
+
+    // Установка родителей для прокси моделей
+    seminarProxyModel->setSourceModel(seminarModel);
+    studentsProxyModel->setSourceModel(studentsModel);
+    datesProxyModel->setSourceModel(datesModel);
+
+    ui->studentsListView->setModel(studentsProxyModel);
+    ui->datesListView->setModel(datesProxyModel);
+    ui->seminarListView->setModel(seminarProxyModel);
+
+    seminarProxyModel->sort(0, Qt::AscendingOrder);
+    studentsProxyModel->sort(0, Qt::AscendingOrder);
+    datesProxyModel->sort(0, Qt::AscendingOrder);
+
+    seminarProxyModel->setDynamicSortFilter(true);
+    studentsProxyModel->setDynamicSortFilter(true);
+    datesProxyModel->setDynamicSortFilter(true);
+
+    // Отключение возможности изменять элементы списков
+    ui->seminarListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->studentsListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->datesListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 void MainWindow::setupConnections()
@@ -67,6 +96,7 @@ void MainWindow::setupConnections()
     connect(ui->addStudentButton, &QPushButton::clicked, this, &MainWindow::onAddStudentButtonClicked);
     connect(ui->changeStudentButton, &QPushButton::clicked, this, &MainWindow::onChangeStudentNameButtonClicked);
     connect(ui->deleteStudentButton, &QPushButton::clicked, this, &MainWindow::onDeleteStudentButtonClicked);
+    connect(ui->goToTableButton, &QPushButton::clicked, this, &MainWindow::onGoToTableButtonClicked);
 }
 
 SeminarData* MainWindow::getSeminarByName(const QString &name)
@@ -125,11 +155,12 @@ void MainWindow::onSeminarSelected(const QItemSelection &selected, const QItemSe
     if (selected.indexes().isEmpty()) return;
 
     // Получение индекса выбранного семинара и проверка его валидности
-    QModelIndex currentIndex = selected.indexes().first();
-    if (!currentIndex.isValid()) return;
+    QModelIndex proxyIndex = selected.indexes().first();
+    if (!proxyIndex.isValid()) return;
 
     // Получение имени семинара и установка его в lineEdit
-    QString seminarName = currentIndex.data(Qt::UserRole).toString();
+    QModelIndex sourceIndex = seminarProxyModel->mapToSource(proxyIndex);
+    QString seminarName = sourceIndex.data(Qt::UserRole).toString();
     ui->changeSeminarLineEdit->setText(seminarName);
 
     // Получение ссылки на семинар
@@ -150,11 +181,12 @@ void MainWindow::onStudentSelected(const QItemSelection &selected, const QItemSe
     }
 
     // Получение индекса выбранного студента и проверка на валидность
-    QModelIndex studentIndex = selected.indexes().first();
-    if (!studentIndex.isValid()) return;
+    QModelIndex proxyIndex = selected.indexes().first();
+    if (!proxyIndex.isValid()) return;
 
     // Извлечение имени студента и установка его в lineEdit
-    QString studentName = studentIndex.data(Qt::UserRole).toString();
+    QModelIndex sourceIndex = studentsProxyModel->mapToSource(proxyIndex);
+    QString studentName = sourceIndex.data(Qt::UserRole).toString();
     ui->changeStudentLineEdit->setText(studentName);
 }
 
@@ -188,13 +220,15 @@ void MainWindow::onAddSeminarButtonClicked() {
 void MainWindow::onChangeSeminarNameButtonClicked()
 {
     // Получение индекса выбранного элемента и проверка на корректный выбор
-    QModelIndex currentIndex = ui->seminarListView->currentIndex();
-    if (!currentIndex.isValid()) {
+    QModelIndex currentProxyIndex = ui->seminarListView->currentIndex();
+    if (!currentProxyIndex.isValid()) {
         log("Необходимо выбрать семинар");
         return;
     }
+
     // Получение имени выделенного семинара
-    QString oldSeminarName = currentIndex.data(Qt::UserRole).toString();
+    QModelIndex sourceIndex = seminarProxyModel->mapToSource(currentProxyIndex);
+    QString oldSeminarName = sourceIndex.data(Qt::UserRole).toString();
 
     // Получение имени семинара из поля ввода
     QString newSeminarName = ui->changeSeminarLineEdit->text().trimmed();
@@ -215,7 +249,7 @@ void MainWindow::onChangeSeminarNameButtonClicked()
             }
 
             // Обновление модели
-            QStandardItem *item = seminarModel->itemFromIndex(currentIndex);
+            QStandardItem *item = seminarModel->itemFromIndex(sourceIndex);
             if (item) {
                 item->setText(newSeminarName);
                 item->setData(newSeminarName, Qt::UserRole);
@@ -232,14 +266,15 @@ void MainWindow::onChangeSeminarNameButtonClicked()
 void MainWindow::onDeleteSeminarButtonClicked()
 {
     // Получение индекса семинара
-    QModelIndex currentIndex = ui->seminarListView->currentIndex();
-    if (!currentIndex.isValid()) {
+    QModelIndex proxyIndex = ui->seminarListView->currentIndex();
+    if (!proxyIndex.isValid()) {
         log("Необходимо выбрать семинар");
         return;
     }
 
     // Получение имени семинара
-    QString seminarName = currentIndex.data(Qt::UserRole).toString();
+    QModelIndex sourceIndex = seminarProxyModel->mapToSource(proxyIndex);
+    QString seminarName = sourceIndex.data(Qt::UserRole).toString();
 
     // Диалог подтверждения
     QMessageBox confirmBox;
@@ -260,7 +295,7 @@ void MainWindow::onDeleteSeminarButtonClicked()
         );
 
     // Обновление UI
-    seminarModel->removeRow(currentIndex.row());
+    seminarModel->removeRow(sourceIndex.row());
     studentsModel->clear();
     datesModel->clear();
     ui->seminarListView->selectionModel()->clearSelection();
@@ -270,14 +305,15 @@ void MainWindow::onDeleteSeminarButtonClicked()
 void MainWindow::onAddStudentButtonClicked()
 {
     // Получение индекса семинара
-    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
-    if (!currentSeminarIndex.isValid()) {
+    QModelIndex seminarProxyIndex = ui->seminarListView->currentIndex();
+    if (!seminarProxyIndex.isValid()) {
         log("Необходимо выбрать семинар");
         return;
     }
 
     // Получение имени семинара
-    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
+    QModelIndex seminarSourceIndex = seminarProxyModel->mapToSource(seminarProxyIndex);
+    QString seminarName = seminarSourceIndex.data(Qt::UserRole).toString();
 
     // Получение семинара по имени
     SeminarData* seminar = getSeminarByName(seminarName);
@@ -314,14 +350,15 @@ void MainWindow::onAddStudentButtonClicked()
 void MainWindow::onChangeStudentNameButtonClicked()
 {
     // Получение индекса семинара и проверка его валидности
-    QModelIndex seminarIndex = ui->seminarListView->currentIndex();
-    if (!seminarIndex.isValid()) {
+    QModelIndex seminarProxyIndex = ui->seminarListView->currentIndex();
+    if (!seminarProxyIndex.isValid()) {
         log("Необходимо выбрать семинар");
         return;
     }
 
     // Получение имени семинара
-    QString seminarName = seminarIndex.data(Qt::UserRole).toString();
+    QModelIndex seminarSourceIndex = seminarProxyModel->mapToSource(seminarProxyIndex);
+    QString seminarName = seminarSourceIndex.data(Qt::UserRole).toString();
 
     // Получение семинара по имени и проверка на корректность выбора
     SeminarData* seminar = getSeminarByName(seminarName);
@@ -331,14 +368,15 @@ void MainWindow::onChangeStudentNameButtonClicked()
     }
 
     // Проверка выбора студента
-    QModelIndex studentIndex = ui->studentsListView->currentIndex();
-    if (!studentIndex.isValid()) {
+    QModelIndex studentProxyIndex = ui->studentsListView->currentIndex();
+    if (!studentProxyIndex.isValid()) {
         log("Необходимо выбрать студента");
         return;
     }
 
     // Получение старого имени из индекса студента и нового из lineEdit
-    QString oldName = studentIndex.data(Qt::UserRole).toString();
+    QModelIndex studentSourceIndex = studentsProxyModel->mapToSource(studentProxyIndex);
+    QString oldName = studentSourceIndex.data(Qt::UserRole).toString();
     QString newName = ui->changeStudentLineEdit->text().trimmed();
 
     // Проверка на пустое имя
@@ -368,7 +406,7 @@ void MainWindow::onChangeStudentNameButtonClicked()
     }
 
     // Обновление UI
-    QStandardItem* item = studentsModel->item(studentIndex.row());
+    QStandardItem* item = studentsModel->item(studentSourceIndex.row());
     item->setText(newName);
     item->setData(newName, Qt::UserRole);
     log("Имя студента изменено");
@@ -376,14 +414,15 @@ void MainWindow::onChangeStudentNameButtonClicked()
 
 void MainWindow::onDeleteStudentButtonClicked() {
     // Получение индекса семинара
-    QModelIndex seminarIndex = ui->seminarListView->currentIndex();
-    if (!seminarIndex.isValid()) {
+    QModelIndex seminarProxyIndex = ui->seminarListView->currentIndex();
+    if (!seminarProxyIndex.isValid()) {
         log("Необходимо выбрать семинар");
         return;
     }
 
     // Получение имени семинара
-    QString seminarName = seminarIndex.data(Qt::UserRole).toString();
+    QModelIndex seminarSourceIndex = seminarProxyModel->mapToSource(seminarProxyIndex);
+    QString seminarName = seminarSourceIndex.data(Qt::UserRole).toString();
 
     // Получение семинара по имени
     SeminarData* seminar = getSeminarByName(seminarName);
@@ -393,14 +432,15 @@ void MainWindow::onDeleteStudentButtonClicked() {
     }
 
     // Получение индекса студента
-    QModelIndex studentIndex = ui->studentsListView->currentIndex();
-    if (!studentIndex.isValid()) {
+    QModelIndex studentProxyIndex = ui->studentsListView->currentIndex();
+    if (!studentProxyIndex.isValid()) {
         log("Необходимо выбрать студента");
         return;
     }
 
     // Получение имени студента
-    QString studentName = studentIndex.data(Qt::UserRole).toString();
+    QModelIndex studentSourceIndex = studentsProxyModel->mapToSource(studentProxyIndex);
+    QString studentName = studentSourceIndex.data(Qt::UserRole).toString();
 
     // Подтверждение удаления
     QMessageBox confirmBox;
@@ -422,7 +462,7 @@ void MainWindow::onDeleteStudentButtonClicked() {
     }
 
     // Обновление UI
-    studentsModel->removeRow(studentIndex.row());
+    studentsModel->removeRow(studentSourceIndex.row());
     ui->changeStudentLineEdit->clear();
     log("Студент успешно удалён");
 }
@@ -430,14 +470,15 @@ void MainWindow::onDeleteStudentButtonClicked() {
 void MainWindow::onAddDateButtonClicked()
 {
     // Получение индекса семинара
-    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
-    if (!currentSeminarIndex.isValid()) {
+    QModelIndex seminarProxyIndex = ui->seminarListView->currentIndex();
+    if (!seminarProxyIndex.isValid()) {
         log("Необходимо выбрать семинар");
         return;
     }
 
     // Получение имени семинара
-    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
+    QModelIndex seminarSourceIndex = seminarProxyModel->mapToSource(seminarProxyIndex);
+    QString seminarName = seminarSourceIndex.data(Qt::UserRole).toString();
 
     // Получение семинара по имени и проверка егр валидности
     SeminarData* seminar = getSeminarByName(seminarName);
@@ -469,14 +510,15 @@ void MainWindow::onAddDateButtonClicked()
 void MainWindow::onEditDateButtonClicked()
 {
     // Получение индекса семинара
-    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
-    if (!currentSeminarIndex.isValid()) {
+    QModelIndex seminarProxyIndex = ui->seminarListView->currentIndex();
+    if (!seminarProxyIndex.isValid()) {
         log("Необходимо выбрать семинар");
         return;
     }
 
     // Получение имени семинара
-    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
+    QModelIndex seminarSourceIndex = seminarProxyModel->mapToSource(seminarProxyIndex);
+    QString seminarName = seminarSourceIndex.data(Qt::UserRole).toString();
 
     // Получение семинара по имени
     SeminarData* seminar = getSeminarByName(seminarName);
@@ -486,14 +528,15 @@ void MainWindow::onEditDateButtonClicked()
     }
 
     // Получение индекса даты
-    QModelIndex currentDateIndex = ui->datesListView->currentIndex();
-    if (!currentDateIndex.isValid()) {
+    QModelIndex dateProxyIndex = ui->datesListView->currentIndex();
+    if (!dateProxyIndex.isValid()) {
         log("Необходимо выбрать дату для изменения");
         return;
     }
 
     // Получение старой даты
-    QDate oldDate = currentDateIndex.data(Qt::UserRole).toDate();
+    QModelIndex dateSourceIndex = datesProxyModel->mapToSource(dateProxyIndex);
+    QDate oldDate = dateSourceIndex.data(Qt::UserRole).toDate();
 
     // Получение новой даты из поля редактирования даты
     QDate newDate = ui->editDateEdit->date();
@@ -509,7 +552,7 @@ void MainWindow::onEditDateButtonClicked()
     }
 
     // Обновление UI
-    QStandardItem* item = datesModel->itemFromIndex(currentDateIndex);
+    QStandardItem* item = datesModel->itemFromIndex(dateSourceIndex);
     if (item) {
         item->setData(newDate, Qt::UserRole);
         item->setText(newDate.toString("dd.MM.yyyy"));
@@ -522,14 +565,15 @@ void MainWindow::onEditDateButtonClicked()
 void MainWindow::onDeleteDateButtonClicked()
 {
     // Получение индекса семинара
-    QModelIndex currentSeminarIndex = ui->seminarListView->currentIndex();
-    if (!currentSeminarIndex.isValid()) {
+    QModelIndex seminarProxyIndex = ui->seminarListView->currentIndex();
+    if (!seminarProxyIndex.isValid()) {
         log("Необходимо выбрать семинар");
         return;
     }
 
     // Получение имени семинара
-    QString seminarName = currentSeminarIndex.data(Qt::UserRole).toString();
+    QModelIndex seminarSourceIndex = seminarProxyModel->mapToSource(seminarProxyIndex);
+    QString seminarName = seminarSourceIndex.data(Qt::UserRole).toString();
 
     // Получение семинара по имени
     SeminarData* seminar = getSeminarByName(seminarName);
@@ -539,14 +583,15 @@ void MainWindow::onDeleteDateButtonClicked()
     }
 
     // Получение даты и проверка ее валидности
-    QModelIndex currentDateIndex = ui->datesListView->currentIndex();
-    if (!currentDateIndex.isValid()) {
+    QModelIndex dateProxyIndex = ui->datesListView->currentIndex();
+    if (!dateProxyIndex.isValid()) {
         log("Необходимо выбрать дату для удаления");
         return;
     }
 
     // Получение выбранной даты
-    QDate selectedDate = currentDateIndex.data(Qt::UserRole).toDate();
+    QModelIndex dateSourceIndex = datesProxyModel->mapToSource(dateProxyIndex);
+    QDate selectedDate = dateSourceIndex.data(Qt::UserRole).toDate();
 
     // Удаление данных через SeminarManager и отлов исключений
     try {
@@ -559,6 +604,46 @@ void MainWindow::onDeleteDateButtonClicked()
     }
 
     // Удаляем дату из модели
-    datesModel->removeRow(currentDateIndex.row());
+    datesModel->removeRow(dateSourceIndex.row());
     log("Дата успешно удалена");
+}
+
+void MainWindow::onGoToTableButtonClicked()
+{
+    // Вызов конструктора второго окна
+    SecondWindow* secondWindow = new SecondWindow(&seminars);
+    secondWindow->show();
+
+    // Подключение
+    connect(secondWindow, &SecondWindow::windowClosed, this, &MainWindow::handleSecondWindowClosed);
+
+    // Закрытие основного окна
+    this->hide();
+}
+
+void MainWindow::handleSecondWindowClosed() {
+    this->show(); // Показываем MainWindow
+    refreshAllModels(); // Обновляем данные
+}
+
+void MainWindow::refreshAllModels() {
+    // Обновление списка семинаров
+    seminarModel->clear();
+    for (const auto& seminar : seminars) {
+        QStandardItem* item = new QStandardItem(seminar.name);
+        item->setData(seminar.name, Qt::UserRole);
+        seminarModel->appendRow(item);
+    }
+
+    // Обновление студентов и дат текущего семинара
+    QModelIndex proxyIndex = ui->seminarListView->currentIndex();
+    if (proxyIndex.isValid()) {
+        QModelIndex sourceIndex = seminarProxyModel->mapToSource(proxyIndex);
+        QString seminarName = sourceIndex.data(Qt::UserRole).toString();
+        SeminarData* seminar = getSeminarByName(seminarName);
+        updateStudentAndDateModels(seminar);
+    } else {
+        studentsModel->clear();
+        datesModel->clear();
+    }
 }

@@ -16,3 +16,9 @@ void StudentManager::changeName(QString new_name, const std::vector<StudentData>
     }
     studentData->name = new_name;
 }
+
+// Метод для выставлении отметки студенту
+void StudentManager::setMark(QDate date, short mark)
+{
+    studentData->marks[date] = mark;
+}

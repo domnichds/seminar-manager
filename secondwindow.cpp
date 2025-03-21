@@ -5,67 +5,28 @@
 #include <QStringListModel>
 #include <QLineEdit>
 
-
-
-SecondWindow::SecondWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::SecondWindow)
+SecondWindow::SecondWindow(std::vector<SeminarData>* seminars, QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::SecondWindow), seminars(seminars)
 {
     ui->setupUi(this);
     setFixedSize(this->size());
     this->setWindowIcon(QIcon("icon.png"));
 
-    QStringList subjects;
-    subjects << "Алгоритмические языки" << "Интегралы и дифференциальные уравнения"
-             << "Математическая логика" << "Основы программирования"
-             << "Теория вероятностей" << "Классическая механика"
-             << "Алгебра" << "Линейная алгебра" << "Квантовая механика"
-             << "Структуры данных" << "Теория чисел" << "Техническая литература"
-             << "Математические методы оптимизации" << "Теория графов"
-             << "Биология" << "Психология" << "Философия науки"
-             << "Информационные системы" << "Экономика"
-             << "Физика твердого тела" << "Анализ данных" << "Цифровая электроника"
-             << "Технология программирования" << "Моделирование процессов"
-             << "Численные методы" << "Теория информации" << "Объектно-ориентированное программирование"
-             << "Искусственный интеллект" << "Компьютерная графика" << "Сетевые технологии"
-             << "Операционные системы" << "Робототехника" << "Генетика"
-             << "Паттерны проектирования" << "Архитектура компьютеров";
+    setWindowTitle("Таблица посещаемости");
+    setWindowFlags(Qt::Window);
+    seminarListModel = new QStandardItemModel(this);
+    seminarProxyModel = new QSortFilterProxyModel(this);
+    attendanceTableModel = new QStandardItemModel(this);
 
-    QStringList rowHeaders = {
-        "Иванов Иван", "Петров Петр", "Сидоров Алексей", "Морозова Анна", "Васильева Ольга",
-        "Смирнов Сергей", "Кузнецов Николай", "Попов Дмитрий", "Лебедев Андрей", "Новиков Михаил",
-        "Федоров Александр", "Михайлов Артём", "Егоров Владимир", "Соколова Мария", "Ларина Екатерина",
-        "Алексеева Наталья", "Козлова Татьяна", "Степанов Игорь", "Соловьёв Юрий", "Виноградова Анастасия",
-        "Белов Денис", "Григорьев Константин", "Дмитриев Виктор", "Крылов Роман", "Макаров Василий",
-        "Никифоров Егор", "Овчинников Арсений", "Павлов Максим", "Сергеев Тимофей", "Тихонов Станислав",
-        "Фролов Евгений", "Чернов Антон", "Шмидт Михаил", "Яковлев Фёдор", "Куликов Борис",
-        "Гаврилов Степан", "Воробьев Валерий", "Зайцев Артём", "Ильин Николай", "Карасев Илья",
-        "Лукин Григорий", "Миронов Владислав", "Никитин Павел", "Островский Аркадий", "Пономарев Василий",
-        "Романов Геннадий", "Савельев Руслан", "Тимофеев Александр", "Ушаков Павел", "Филиппов Аркадий"
-    };
+    seminarProxyModel->setSourceModel(seminarListModel);
+    seminarProxyModel->setSortRole(Qt::UserRole);
+    seminarProxyModel->sort(0, Qt::AscendingOrder);
 
-    QStringList colHeaders = {
-        "01.01\n2025", "08.01\n2025", "15.01\n2025", "22.01\n2025", "29.01\n2025",
-        "05.02\n2025", "12.02\n2025", "19.02\n2025", "26.02\n2025", "05.03\n2025",
-        "12.03\n2025", "19.03\n2025", "26.03\n2025", "02.04\n2025", "09.04\n2025",
-        "16.04\n2025", "23.04\n2025", "30.04\n2025", "07.05\n2025", "14.05\n2025",
-        "21.05\n2025", "28.05\n2025", "04.06\n2025", "11.06\n2025", "18.06\n2025",
-        "25.06\n2025", "02.07\n2025", "09.07\n2025", "16.07\n2025", "23.07\n2025",
-        "30.07\n2025", "06.08\n2025", "13.08\n2025", "20.08\n2025", "27.08\n2025",
-        "03.09\n2025", "10.09\n2025", "17.09\n2025", "24.09\n2025", "01.10\n2025",
-        "08.10\n2025", "15.10\n2025", "22.10\n2025", "29.10\n2025", "05.11\n2025",
-        "12.11\n2025", "19.11\n2025", "26.11\n2025", "03.12\n2025", "10.12\n2025"
-    };
+    ui->seminarListView->setModel(seminarProxyModel);
+    ui->seminarListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->seminarListView->setFocusPolicy(Qt::NoFocus);
 
-
-    QStandardItemModel *model = new QStandardItemModel(50, 50, this);
-    for (int i = 0; i < rowHeaders.size(); ++i) {
-        model->setHeaderData(i, Qt::Vertical, rowHeaders[i]);
-    }
-    for (int i = 0; i < colHeaders.size(); ++i) {
-        model->setHeaderData(i, Qt::Horizontal, colHeaders[i]);
-    }
-    ui->attendanceTableView->setModel(model);
+    ui->attendanceTableView->setModel(attendanceTableModel);
     ui->attendanceTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->attendanceTableView->setSelectionBehavior(QAbstractItemView::SelectItems);
     ui->attendanceTableView->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -77,14 +38,205 @@ SecondWindow::SecondWindow(QWidget *parent) :
     QFont font("ALS Sector Regular", 12);
     ui->attendanceTableView->setFont(font);
 
-    QStringListModel *listModel = new QStringListModel(subjects, this);
-    ui->seminarListView->setModel(listModel);
-    ui->seminarListView->setFocusPolicy(Qt::NoFocus);
-
     ui->markSelectComboBox->addItem("Отсутствовал");
     ui->markSelectComboBox->addItem("Присутствовал");
     ui->markSelectComboBox->addItem("Работал");
     ui->markSelectComboBox->setEditable(false);
+
+    updateSeminarList();
+    connect(ui->seminarListView->selectionModel(), &QItemSelectionModel::selectionChanged,this, &SecondWindow::onSeminarSelected);
+    connect(ui->goBackButton, &QPushButton::clicked, this, &SecondWindow::onGoBackButtonClicked);
+    connect(ui->putMarkButton, &QPushButton::clicked, this, &SecondWindow::onSetMarkButtonClicked);
+}
+
+void SecondWindow::log(QString message)
+{
+    // Установка текста для сообщений
+    ui->systemMesssgeLable->setText(message);
+}
+
+QString SecondWindow::convertMark(short mark)
+{
+    switch (mark) {
+    case -1: return QString::fromStdString("Н");
+    case 0: return QString::fromStdString("П");
+    case 1: return QString::fromStdString("Р");
+    }
+}
+
+QString SecondWindow::convertDate(QDate date)
+{
+    QString new_date = date.toString("dd.MM\nyyyy");
+    return new_date;
+}
+
+short SecondWindow::convertMarkToShort(QString mark)
+{
+    if (mark == "Отсутствовал") return -1;
+    else if (mark == "Присутствовал") return 0;
+    else if (mark == "Работал") return 1;
+}
+
+void SecondWindow::updateSeminarList() {
+    seminarListModel->clear();
+    for (const auto& seminar : *seminars) {
+        QStandardItem* item = new QStandardItem(seminar.name);
+        item->setData(seminar.name, Qt::UserRole);
+        seminarListModel->appendRow(item);
+    }
+}
+
+SeminarData* SecondWindow::getSeminarByName(const QString &name)
+{
+    // Поиск семинара в векторе семинаров
+    auto it = std::find_if(seminars->begin(), seminars->end(),
+                           [&name](SeminarData &seminar)
+                           {
+                               return seminar.name == name;
+                           });
+    // При нахождении семинара возвращаем ссылку на него, иначе - nullptr
+    return (it != seminars->end()) ? &(*it) : nullptr;
+}
+
+void SecondWindow::onSeminarSelected(const QItemSelection& selected, const QItemSelection& deselected) {
+    Q_UNUSED(deselected);
+
+    if (selected.isEmpty()) {
+        attendanceTableModel->clear();
+        return;
+    }
+
+    QModelIndex proxyIndex = selected.indexes().first();
+    QModelIndex sourceIndex = seminarProxyModel->mapToSource(proxyIndex);
+    QString seminarName = sourceIndex.data(Qt::UserRole).toString();
+    SeminarData* seminar = getSeminarByName(seminarName);
+
+    if (!seminar) return;
+
+    updateDataTable(seminar);
+}
+
+void SecondWindow::updateDataTable(SeminarData* seminar) {
+    attendanceTableModel->clear();
+
+    // Сортировка дат в хронологическом порядке
+    std::vector<QDate> sortedDates = seminar->dates;
+    std::sort(sortedDates.begin(), sortedDates.end());
+
+    // Сортировка студентов по алфавиту
+    std::vector<StudentData> sortedStudents = seminar->students;
+    std::sort(sortedStudents.begin(), sortedStudents.end(),
+              [](const StudentData& a, const StudentData& b) {
+                  return a.name < b.name;
+              }
+              );
+
+    // Установка заголовков столбцов
+    QStringList colHeaders;
+    for (const QDate& date : sortedDates) {
+        colHeaders << convertDate(date);
+    }
+    attendanceTableModel->setHorizontalHeaderLabels(colHeaders);
+
+    // Заполнение таблицы данными
+    QStringList rowHeaders;
+    int row = 0;
+    for (const StudentData& student : sortedStudents) {
+        rowHeaders << student.name;
+        for (int col = 0; col < sortedDates.size(); ++col) {
+            QDate date = sortedDates[col];
+            short mark = student.marks.at(date);
+            QStandardItem* item = new QStandardItem(convertMark(mark));
+            attendanceTableModel->setItem(row, col, item);
+        }
+        ++row;
+    }
+    attendanceTableModel->setVerticalHeaderLabels(rowHeaders);
+}
+
+void SecondWindow::onSetMarkButtonClicked()
+{
+    // Проверка выбранной ячейки
+    QModelIndex currentIndex = ui->attendanceTableView->currentIndex();
+    if (!currentIndex.isValid()) {
+        log("Выберите ячейку в таблице!");
+        return;
+    }
+
+    // Получение данных из выделенной ячейки
+    int row = currentIndex.row();
+    int col = currentIndex.column();
+
+    // Получение имени студента из заголовка строки
+    QString studentName = attendanceTableModel->headerData(row, Qt::Vertical).toString();
+
+    // Получение даты из заголовка столбца
+    QString dateStr = attendanceTableModel->headerData(col, Qt::Horizontal).toString();
+    QDate date = QDate::fromString(dateStr, "dd.MM\nyyyy");
+    if (!date.isValid()) {
+        log("Ошибка формата даты!");
+        return;
+    }
+
+    // Получение выбранного семинара
+    QModelIndex seminarIndex = ui->seminarListView->currentIndex();
+    if (!seminarIndex.isValid()) {
+        log("Выберите семинар!");
+        return;
+    }
+
+    QString seminarName = seminarIndex.data(Qt::UserRole).toString();
+    SeminarData* seminar = getSeminarByName(seminarName);
+    if (!seminar) {
+        log("Семинар не найден!");
+        return;
+    }
+
+    // Поиск студента по имени
+    auto studentIt = std::find_if(seminar->students.begin(), seminar->students.end(),
+                                  [&studentName](const StudentData& s) { return s.name == studentName; });
+
+    if (studentIt == seminar->students.end()) {
+        log("Студент не найден!");
+        return;
+    }
+
+    // Проверка существования даты в семинаре
+    auto dateIt = std::find(seminar->dates.begin(), seminar->dates.end(), date);
+    if (dateIt == seminar->dates.end()) {
+        log("Дата не найдена в семинаре!");
+        return;
+    }
+
+    // Получение оценки из ComboBox
+    QString markStr = ui->markSelectComboBox->currentText();
+    short mark;
+    try {
+        mark = convertMarkToShort(markStr);
+    }
+    catch (const std::invalid_argument& e) {
+        log(e.what());
+        return;
+    }
+
+    // Обновление оценки
+    studentIt->marks[date] = mark;
+
+    // Обновление таблицы
+    updateDataTable(seminar);
+
+    log("Оценка успешно обновлена!");
+}
+
+void SecondWindow::onGoBackButtonClicked()
+{
+    emit windowClosed();
+    this->close();
+}
+
+void SecondWindow::closeEvent(QCloseEvent *event) {
+    emit windowClosed();
+    QMainWindow::closeEvent(event);
 }
 
 SecondWindow::~SecondWindow()

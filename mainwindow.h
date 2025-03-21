@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QItemSelection>
 #include <QStandardItemModel>
+#include <QSortFilterProxyModel>
+#include "DateSortProxyModel.hpp"
 #include "SeminarData.hpp"
 #include "SeminarManager.hpp"
 
@@ -25,8 +27,11 @@ private:
     Ui::MainWindow *ui;
     std::vector<SeminarData> seminars;
     QStandardItemModel *seminarModel;
+    QSortFilterProxyModel *seminarProxyModel;
     QStandardItemModel *studentsModel;
+    QSortFilterProxyModel *studentsProxyModel;
     QStandardItemModel *datesModel;
+    DateSortProxyModel* datesProxyModel;
 
     void setupUI();
     void setupConnections();
@@ -35,19 +40,22 @@ private:
     SeminarData* getSeminarByName(const QString&);
     bool validateNotEmpty(const QString &input, const QString &errorMessage);
     void updateStudentAndDateModels(SeminarData* seminar);
+    void refreshAllModels();
 
 private slots:
-    void onAddSeminarButtonClicked();
     void onSeminarSelected(const QItemSelection& selected, const QItemSelection& deselected);
     void onStudentSelected(const QItemSelection& selected, const QItemSelection& deselected);
+    void onAddSeminarButtonClicked();
     void onChangeSeminarNameButtonClicked();
     void onDeleteSeminarButtonClicked();
-    void onAddDateButtonClicked();
-    void onDeleteDateButtonClicked();
-    void onEditDateButtonClicked();
     void onAddStudentButtonClicked();
     void onChangeStudentNameButtonClicked();
     void onDeleteStudentButtonClicked();
+    void onAddDateButtonClicked();
+    void onEditDateButtonClicked();
+    void onDeleteDateButtonClicked();
+    void onGoToTableButtonClicked();
+    void handleSecondWindowClosed();
 };
 
 #endif // MAINWINDOW_H

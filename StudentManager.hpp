@@ -17,6 +17,8 @@ public:
     StudentManager(StudentData* data);
     // Метод для изменения имени студента
     void changeName(QString new_name, const std::vector<StudentData>& students);
+    // Метод для выставлении оценки студент
+    void setMark(QDate, short);
 };
 
 #endif // STUDENTMANAGER_H

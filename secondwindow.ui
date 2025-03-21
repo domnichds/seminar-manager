@@ -67,13 +67,14 @@
         <string notr="true">QListView {
     background: transparent;
     border: none;
+   border: none;
 }
 QListView::viewport {
     background: transparent;
 }
 QListView::item {
     background-color: transparent;
-    border: 1px solid transparent;
+    border: 0px solid transparent;
     padding: 5px;
 }
 
@@ -168,7 +169,7 @@ QTableCornerButton::section {
       <x>0</x>
       <y>0</y>
       <width>271</width>
-      <height>241</height>
+      <height>311</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -230,59 +231,6 @@ QPushButton:focus {
        </property>
        <property name="text">
         <string>Поставить отметку</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QComboBox" name="markSelectComboBox">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>41</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>41</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <family>ALS Sector Regular</family>
-         <pointsize>-1</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QComboBox {
-    background-color: rgba(65, 32, 138, 0.6);
-    color: white;
-    border: 1px solid rgba(65, 32, 138, 0.8);
-    border-radius: 12px;
-    padding: 5px 10px;
-    font-size: 16px;
-    font-weight: bold;
-}
-QComboBox:hover {
-    background-color: rgba(112, 69, 211, 0.8);
-    border: 1px solid rgba(112, 69, 211, 1);
-}
-QComboBox:focus {
-    background-color: rgba(112, 69, 211, 0.9);
-    border: 2px solid rgba(112, 69, 211, 1);
-    outline: none;
-}
-QComboBox::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-    width: 30px;
-    border-left: 1px solid rgba(65, 32, 138, 0.8);
-}
-QComboBox::down-arrow {
-    width: 14px;
-    height: 14px;
-}</string>
        </property>
       </widget>
      </item>
@@ -389,6 +337,88 @@ QPushButton:focus {
        </property>
        <property name="text">
         <string>Вернуться к семинарам</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="markSelectComboBox">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>41</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Regular</family>
+         <pointsize>-1</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox {
+    background-color: rgba(65, 32, 138, 0.6);
+    color: white;
+    border: 1px solid rgba(65, 32, 138, 0.8);
+    border-radius: 12px;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+QComboBox:hover {
+    background-color: rgba(112, 69, 211, 0.8);
+    border: 1px solid rgba(112, 69, 211, 1);
+}
+QComboBox:focus {
+    background-color: rgba(112, 69, 211, 0.9);
+    border: 2px solid rgba(112, 69, 211, 1);
+    outline: none;
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 30px;
+    border-left: 1px solid rgba(65, 32, 138, 0.8);
+}
+QComboBox::down-arrow {
+    width: 14px;
+    height: 14px;
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="systemMesssgeLable">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>ALS Sector Bold</family>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    color: white;
+}
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
        </property>
       </widget>
      </item>

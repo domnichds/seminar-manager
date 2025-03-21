@@ -27,5 +27,7 @@ qt_add_executable(untitled1
     StudentData.hpp
     StudentManager.cpp
     StudentManager.hpp
+    DateSortProxyModel.hpp
+    DateSortProxyModel.cpp
 )
 target_link_libraries(untitled1 PRIVATE Qt6::Core Qt6::Widgets)

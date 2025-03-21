@@ -20,8 +20,7 @@ int main(int argc, char *argv[])
         qDebug() << "ALS_Sector-Regular.otf успешно загружен";
     }
     MainWindow w;
-    SecondWindow sw;
     w.show();
-    sw.show();
+    a.setQuitOnLastWindowClosed(false);
     return a.exec();
 }

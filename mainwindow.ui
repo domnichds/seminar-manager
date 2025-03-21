@@ -908,6 +908,9 @@ QPushButton:focus {
        <property name="text">
         <string>Системное сообщение (ошибки)</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
       </widget>
      </item>
     </layout>
