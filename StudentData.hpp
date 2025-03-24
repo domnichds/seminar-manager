@@ -14,6 +14,7 @@ public:
 
     // Конструктор класса
     StudentData(QString name, const std::vector<QDate>& dates);
+    StudentData(QString name, const std::map<QDate, short>& marks);
 };
 
 #endif // STUDENTDATA_H
