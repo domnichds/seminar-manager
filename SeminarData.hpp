@@ -16,6 +16,7 @@ public:
 
     // Конструктор класса
     SeminarData(QString name);
+    SeminarData(QString name, std::vector<QDate> dates, std::vector<StudentData> students);
 };
 
 #endif // SEMINARDATA_H
