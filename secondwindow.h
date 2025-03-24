@@ -17,15 +17,6 @@ class SecondWindow : public QMainWindow
 
 public:
     explicit SecondWindow(std::vector<SeminarData>* seminars, QWidget *parent = nullptr);
-    void log(QString);
-    void updateSeminarList();
-    SeminarData* getSeminarByName(const QString&);
-    void onSeminarSelected(const QItemSelection&, const QItemSelection&);
-    void updateDataTable(SeminarData*);
-    QString convertMark(short);
-    QString convertDate(QDate);
-    short convertMarkToShort(QString);
-    ~SecondWindow();
 
 private:
     std::vector<SeminarData>* seminars;
@@ -34,9 +25,23 @@ private:
     QStandardItemModel* attendanceTableModel;
     Ui::SecondWindow *ui;
 
+    void setupUI();
+    void setupConnections();
+
+    void log(QString);
+    void updateSeminarList();
+    SeminarData* getSeminarByName(const QString&);
+    void updateDataTable(SeminarData*);
+    QString convertMark(short);
+    QString convertDate(QDate);
+    short convertMarkToShort(QString);
+    ~SecondWindow();
+
 private slots:
+    void onSeminarSelected(const QItemSelection&, const QItemSelection&);
     void onSetMarkButtonClicked();
     void onGoBackButtonClicked();
+
 signals:
     void windowClosed();
 

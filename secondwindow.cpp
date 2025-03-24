@@ -8,6 +8,13 @@
 SecondWindow::SecondWindow(std::vector<SeminarData>* seminars, QWidget *parent) :
     QMainWindow(parent), ui(new Ui::SecondWindow), seminars(seminars)
 {
+    setupUI();
+    setupConnections();
+    updateSeminarList();
+}
+
+void SecondWindow::setupUI()
+{
     ui->setupUi(this);
     setFixedSize(this->size());
     this->setWindowIcon(QIcon("icon.png"));
@@ -18,14 +25,17 @@ SecondWindow::SecondWindow(std::vector<SeminarData>* seminars, QWidget *parent) 
     seminarProxyModel = new QSortFilterProxyModel(this);
     attendanceTableModel = new QStandardItemModel(this);
 
+    // Настройка прокси модели для списка семинаров
     seminarProxyModel->setSourceModel(seminarListModel);
     seminarProxyModel->setSortRole(Qt::UserRole);
     seminarProxyModel->sort(0, Qt::AscendingOrder);
 
+    // Настройка списка семинаров
     ui->seminarListView->setModel(seminarProxyModel);
     ui->seminarListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->seminarListView->setFocusPolicy(Qt::NoFocus);
 
+    // Настройка таблицы посещаемости
     ui->attendanceTableView->setModel(attendanceTableModel);
     ui->attendanceTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->attendanceTableView->setSelectionBehavior(QAbstractItemView::SelectItems);
@@ -38,12 +48,15 @@ SecondWindow::SecondWindow(std::vector<SeminarData>* seminars, QWidget *parent) 
     QFont font("ALS Sector Regular", 12);
     ui->attendanceTableView->setFont(font);
 
+    // Добавление элементов в ComboBox
     ui->markSelectComboBox->addItem("Отсутствовал");
     ui->markSelectComboBox->addItem("Присутствовал");
     ui->markSelectComboBox->addItem("Работал");
     ui->markSelectComboBox->setEditable(false);
+}
 
-    updateSeminarList();
+void SecondWindow::setupConnections()
+{
     connect(ui->seminarListView->selectionModel(), &QItemSelectionModel::selectionChanged,this, &SecondWindow::onSeminarSelected);
     connect(ui->goBackButton, &QPushButton::clicked, this, &SecondWindow::onGoBackButtonClicked);
     connect(ui->putMarkButton, &QPushButton::clicked, this, &SecondWindow::onSetMarkButtonClicked);
@@ -57,6 +70,7 @@ void SecondWindow::log(QString message)
 
 QString SecondWindow::convertMark(short mark)
 {
+    // Преобразуем short значение в строку
     switch (mark) {
     case -1: return QString::fromStdString("Н");
     case 0: return QString::fromStdString("П");
@@ -66,18 +80,21 @@ QString SecondWindow::convertMark(short mark)
 
 QString SecondWindow::convertDate(QDate date)
 {
+    // Перевод даты в строку с переносом года на другую строку
     QString new_date = date.toString("dd.MM\nyyyy");
     return new_date;
 }
 
 short SecondWindow::convertMarkToShort(QString mark)
 {
+    // Перевод значения из ComboBox в short
     if (mark == "Отсутствовал") return -1;
     else if (mark == "Присутствовал") return 0;
     else if (mark == "Работал") return 1;
 }
 
 void SecondWindow::updateSeminarList() {
+    // Добавление в список семинаров всех значений из seminars
     seminarListModel->clear();
     for (const auto& seminar : *seminars) {
         QStandardItem* item = new QStandardItem(seminar.name);
@@ -101,18 +118,20 @@ SeminarData* SecondWindow::getSeminarByName(const QString &name)
 void SecondWindow::onSeminarSelected(const QItemSelection& selected, const QItemSelection& deselected) {
     Q_UNUSED(deselected);
 
+    // Очищаем таблицу при пустом выборе
     if (selected.isEmpty()) {
         attendanceTableModel->clear();
         return;
     }
 
+    // Получаем ссылку на seminar
     QModelIndex proxyIndex = selected.indexes().first();
     QModelIndex sourceIndex = seminarProxyModel->mapToSource(proxyIndex);
     QString seminarName = sourceIndex.data(Qt::UserRole).toString();
     SeminarData* seminar = getSeminarByName(seminarName);
 
+    // Если не нашли seminar возвращаем значение, иначе - обновлям таблицу
     if (!seminar) return;
-
     updateDataTable(seminar);
 }
 
@@ -151,6 +170,7 @@ void SecondWindow::updateDataTable(SeminarData* seminar) {
         }
         ++row;
     }
+    // Установка вертикального заголовка
     attendanceTableModel->setVerticalHeaderLabels(rowHeaders);
 }
 
@@ -178,13 +198,12 @@ void SecondWindow::onSetMarkButtonClicked()
         return;
     }
 
-    // Получение выбранного семинара
+    // Получение индекса и имени выбранного семинара
     QModelIndex seminarIndex = ui->seminarListView->currentIndex();
     if (!seminarIndex.isValid()) {
         log("Выберите семинар!");
         return;
     }
-
     QString seminarName = seminarIndex.data(Qt::UserRole).toString();
     SeminarData* seminar = getSeminarByName(seminarName);
     if (!seminar) {
@@ -224,7 +243,6 @@ void SecondWindow::onSetMarkButtonClicked()
 
     // Обновление таблицы
     updateDataTable(seminar);
-
     log("Оценка успешно обновлена!");
 }
 

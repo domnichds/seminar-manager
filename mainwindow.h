@@ -25,24 +25,24 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    std::vector<SeminarData> seminars;
+    std::vector<SeminarData> seminars; // Получаем из .csv
     QStandardItemModel *seminarModel;
-    QSortFilterProxyModel *seminarProxyModel;
+    QSortFilterProxyModel *seminarProxyModel; // Прокси модель для сортировки семинаров
     QStandardItemModel *studentsModel;
-    QSortFilterProxyModel *studentsProxyModel;
+    QSortFilterProxyModel *studentsProxyModel; // Прокси модель для сортировки семинаров
     QStandardItemModel *datesModel;
-    DateSortProxyModel* datesProxyModel;
+    DateSortProxyModel* datesProxyModel; // Кастомная прокси модель для сортировки дат
 
-    void setupUI();
-    void setupConnections();
-    void log(QString message);
+    void setupUI(); // Метод для настройки элементов UI
+    void setupConnections(); // Метод для установки привязок
 
-    SeminarData* getSeminarByName(const QString&);
-    bool validateNotEmpty(const QString &input, const QString &errorMessage);
-    void updateStudentAndDateModels(SeminarData* seminar);
-    void refreshAllModels();
+    void log(QString message); // Метод для вывода пользовательских сообщений
+    SeminarData* getSeminarByName(const QString&); // Получение ссылки на семинар по имени
+    void updateStudentAndDateModels(SeminarData* seminar); // Обновление списка дат и студентов
+    void refreshAllModels(); // Обновление всех 3 списков
 
 private slots:
+    // В onSeminarSelected и onStudentSelected &deselected не исползуется
     void onSeminarSelected(const QItemSelection& selected, const QItemSelection& deselected);
     void onStudentSelected(const QItemSelection& selected, const QItemSelection& deselected);
     void onAddSeminarButtonClicked();
