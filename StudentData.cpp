@@ -8,3 +8,9 @@ StudentData::StudentData(QString name, const std::vector<QDate>& dates)
         marks[date] = 0;  // Инициализация оценок по датам
     }
 }
+
+StudentData::StudentData(QString name, const std::map<QDate, short>& marks)
+{
+    this->name = name;
+    this->marks = marks;
+}
