@@ -13,11 +13,14 @@
 #include <QMessageBox>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
+#include "CSVHandler.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     setupUI();
     setupConnections();
+    CSVHandler csvManager("C:\\Users\\user\\Documents\\untitled1\\Data");
+    seminars = csvManager.getSeminars();
 }
 
 MainWindow::~MainWindow()

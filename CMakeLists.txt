@@ -17,7 +17,7 @@ qt_add_executable(untitled1
     secondwindow.cpp
     secondwindow.h
     ${RESOURCES}
-    CSVHandler.h
+    CSVHandler.hpp
     CSVHandler.cpp
     SeminarData.cpp
     SeminarData.hpp

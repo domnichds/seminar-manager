@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "Seminar.h"
+#include "SeminarData.hpp"
 
 class CSVHandler
 {
