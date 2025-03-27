@@ -252,7 +252,8 @@ void SecondWindow::onGoBackButtonClicked()
     this->close();
 }
 
-void SecondWindow::closeEvent(QCloseEvent *event) {
+void SecondWindow::closeEvent(QCloseEvent *event)
+{
     emit windowClosed();
     QMainWindow::closeEvent(event);
 }

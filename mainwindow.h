@@ -8,6 +8,7 @@
 #include "DateSortProxyModel.hpp"
 #include "SeminarData.hpp"
 #include "SeminarManager.hpp"
+#include "CSVHandler.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -56,6 +57,9 @@ private slots:
     void onDeleteDateButtonClicked();
     void onGoToTableButtonClicked();
     void handleSecondWindowClosed();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // MAINWINDOW_H

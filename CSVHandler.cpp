@@ -74,12 +74,13 @@ void CSVHandler::readData()
                         }
                         else
                         {
-                            QDate date = QDate::fromString(cell_to_QString, "dd-MM-yyyy");
+                            QDate date = QDate::fromString(cell_to_QString, "dd.MM.yyyy");
 
-                            if (date.isValid())
+                            if (!date.isValid())
                             {
-                                dates.push_back(date);
+                                throw std::invalid_argument("Неправильный формат Data " + cell + " в файле " + filename);
                             }
+                            dates.push_back(date);
                         }
                     }
                     else
@@ -101,6 +102,10 @@ void CSVHandler::readData()
                             else if (cell_to_QString.startsWith("Р"))
                             {
                                 ReadMarks.push_back(1);
+                            }
+                            else
+                            {
+                                throw std::invalid_argument("Неверный формат marks " + cell + " в файле " + filename);
                             }
                         }
                     }
@@ -130,56 +135,72 @@ void CSVHandler::readData()
 
 void CSVHandler::writeData(const std::vector<SeminarData>& AllSeminars)
 {
-    int Student_counter = 0;
-    std::vector<QDate> WriteDates = AllSeminars[0].dates;
-
+    // Удаление всех файлов в папке
     for (const auto& entry : std::filesystem::directory_iterator(path))
     {
         if (entry.is_regular_file())
         {
-            std::ofstream file(entry.path(), std::ios::trunc);
-            std::string oldName = path + "/" + seminars[Student_counter].name.toStdString() + ".csv";
-            std::string newName = path + "/" + AllSeminars[Student_counter].name.toStdString() + ".csv";
+            std::filesystem::remove(entry.path());
+        }
+    }
 
-            file << "Имя студента;";
+    if (AllSeminars.empty())
+    {
+        this->seminars = AllSeminars;
+        return;
+    }
+
+    int Student_counter = 0;
+    std::vector<QDate> WriteDates = AllSeminars[0].dates;
+    std::sort(WriteDates.begin(), WriteDates.end());
+
+    for (const auto& seminar : AllSeminars)
+    {
+        QString filePath = QString::fromStdString(path) + "/" + seminar.name + ".csv";
+        QFile file(filePath);
+
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            std::cerr << "Ошибка создания файла: " << filePath.toStdString() << std::endl;
+            continue;
+        }
+
+        QTextStream out(&file);
+        out << QChar(0xFEFF);
+
+        out << "Имя студента;";
+        for (const auto& date : WriteDates)
+        {
+            out << date.toString("dd.MM.yyyy") << ";";
+        }
+        out << "\n";
+
+        std::vector<StudentData> SortStudentData = seminar.students;
+        std::sort(SortStudentData.begin(), SortStudentData.end());
+
+        for (const auto& student : SortStudentData)
+        {
+            out << student.name << ";";
+
             for (const auto& date : WriteDates)
             {
-                file << date.toString("dd-MM-yyyy").toStdString() << ";";
-            }
-            file << std::endl;
-
-            for (const auto& student : AllSeminars[Student_counter].students)
-            {
-                file << student.name.toStdString() << ";";
-
-                for (const auto& date : WriteDates)
+                if (student.marks.count(date))
                 {
-                    if (student.marks.count(date))
-                    {
-                        short mark = student.marks.at(date);
-                        if (mark == -1) file << "Н;";
-                        else if (mark == 0) file << "П;";
-                        else if (mark == 1) file << "Р;";
-                    }
-                    else
-                    {
-                        file << "П";
-                    }
+                    short mark = student.marks.at(date);
+                    if (mark == -1) out << "Н;";
+                    else if (mark == 0) out << "П;";
+                    else if (mark == 1) out << "Р;";
                 }
-                file << std::endl;
+                else
+                {
+                    out << "П;";
+                }
             }
-            file.close();
-
-            std::string oldFile = oldName;
-            std::string newFile = newName;
-
-            if (std::rename(oldFile.c_str(), newFile.c_str()) != 0)
-            {
-                perror("Error renaming file");
-                std::cerr << "Failed to rename file: " << oldFile << " to " << newFile << std::endl;
-            }
+            out << "\n";
         }
-        Student_counter += 1;
+
+        file.close();
     }
+
     this->seminars = AllSeminars;
 }

@@ -13,14 +13,33 @@
 #include <QMessageBox>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
-#include "CSVHandler.hpp"
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     setupUI();
     setupConnections();
-    CSVHandler csvManager("C:\\Users\\user\\Documents\\untitled1\\Data");
-    seminars = csvManager.getSeminars();
+    try {
+        CSVHandler csvManager(".\\Data");
+        csvManager.readData();
+        seminars = csvManager.getSeminars();
+    }
+    catch (const std::exception& e) {
+        QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()),
+                              QMessageBox::Close);
+
+        // Завершение программы
+        QCoreApplication::quit();
+        std::exit(EXIT_FAILURE);
+    }
+
+    // Добавление считанных семинаров в модель
+    for (const auto &seminar : seminars) {
+        QStandardItem *item = new QStandardItem(seminar.name);
+        item->setData(seminar.name, Qt::UserRole);
+        seminarModel->appendRow(item);
+    }
+    refreshAllModels();
 }
 
 MainWindow::~MainWindow()
@@ -580,14 +599,6 @@ void MainWindow::handleSecondWindowClosed() {
 }
 
 void MainWindow::refreshAllModels() {
-    // Обновление списка семинаров
-    seminarModel->clear();
-    for (const auto& seminar : seminars) {
-        QStandardItem* item = new QStandardItem(seminar.name);
-        item->setData(seminar.name, Qt::UserRole);
-        seminarModel->appendRow(item);
-    }
-
     // Обновление студентов и дат текущего семинара
     QModelIndex proxyIndex = ui->seminarListView->currentIndex();
     if (proxyIndex.isValid()) {
@@ -598,5 +609,43 @@ void MainWindow::refreshAllModels() {
     } else {
         studentsModel->clear();
         datesModel->clear();
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Подтверждение");
+    msgBox.setText("Вы хотите сохранить изменения перед закрытием?");
+    msgBox.setIcon(QMessageBox::Question);
+
+    // Изменения названия кнопок
+    QPushButton *yesButton = msgBox.addButton("Да", QMessageBox::YesRole);
+    QPushButton *noButton = msgBox.addButton("Нет", QMessageBox::NoRole);
+    QPushButton *cancelButton = msgBox.addButton("Отмена", QMessageBox::RejectRole);
+
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == yesButton) {
+        // Сохранить данные и закрыть окно
+        try {
+        CSVHandler csv = CSVHandler(".\\Data");
+        csv.readData();
+        std::vector<SeminarData> b = seminars;
+        csv.writeData(b);
+        }
+        catch (std::exception& e) {
+            QMessageBox::critical(this, "Ошибка", "Необходимо закрыть используемые таблицы!",
+                                  QMessageBox::Close, QMessageBox::Close);
+        }
+        event->accept();
+        qApp->quit();
+    } else if (msgBox.clickedButton() == noButton) {
+        // Закрыть окно без сохранения
+        event->accept();
+        qApp->quit();
+    } else {
+        // Отменить закрытие окна
+        event->ignore();
     }
 }

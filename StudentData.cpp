@@ -14,3 +14,8 @@ StudentData::StudentData(QString name, const std::map<QDate, short>& marks)
     this->name = name;
     this->marks = marks;
 }
+
+bool StudentData::operator<(StudentData &other)
+{
+    return name < other.name;
+}
