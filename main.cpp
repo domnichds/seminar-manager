@@ -6,6 +6,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    // Загрузка шрифтов
     int idBold = QFontDatabase::addApplicationFont(":/ALS Sector/ALS_Sector-Bold.otf");
     if (idBold == -1) {
         qDebug() << "Не удалось загрузить ALS_Sector-Bold.otf";

@@ -19,12 +19,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     setupUI();
     setupConnections();
+
+    // Попытка чтения данных с помощью CSVHandler
     try {
         CSVHandler csvManager(".\\Data");
         csvManager.readData();
         seminars = csvManager.getSeminars();
     }
     catch (const std::exception& e) {
+        // Окно с ошибкой
         QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()),
                               QMessageBox::Close);
 
@@ -614,6 +617,7 @@ void MainWindow::refreshAllModels() {
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    // Окно с подтверждением закрытия
     QMessageBox msgBox;
     msgBox.setWindowTitle("Подтверждение");
     msgBox.setText("Вы хотите сохранить изменения перед закрытием?");
